@@ -1,1 +1,1 @@
-java -jar $(find /home/janek/Projects/monsterutilities/MonsterUtilities*.jar)
+java -jar $(find MonsterUtilities*.jar)
