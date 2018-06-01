@@ -24,38 +24,39 @@ val cachePath: Path
 			.resolve("monsterutilities").createDirs()
 
 object Settings : SettingsNode("xerus/monsterutilities") {
-	
+
 	val PLAYERVOLUME = create("playerVolume", 0.4)
 	val PLAYERSCROLLSENSITIVITY = create("playerSeekbarScrollSensitivity", 6.0)
 	val PLAYERSEEKBARHEIGHT = create("playerSeekbarHeight", 8.0)
-	
+	val ENABLEEQUALIZER = create("equalizerEnabled", false)
+
 	val ENABLECACHE = create("cacheEnabled", true)
-	
+
 	val STARTUPTAB = create("tabStartup", "Previous")
 	val LASTTAB = create("tabLast")
-	
+
 	val LASTCATALOGCOLUMNS = create("catalogLastColumns", availableColumns)
 	val VISIBLECATALOGCOLUMNS = create("catalogVisibleColumns", defaultColumns)
 	val GENRECOLORS = create("genrecolors", 80)
-	
+
 	val SKIN = create("skin", "black")
-	
+
 	val LASTVERSION = create("versionLast")
 	val IGNOREVERSION = create("versionIgnore")
 	val DELETE = create("versionDelete", File(""))
-	
+
 	val AUTOUPDATE = create("updateAutomatic", true)
 	val UNSTABLE = create("updateUnstable", false)
-	
+
 	val FILENAMEPATTERN = create("updatePattern", "MonsterUtilities-%version%.jar")
-	
+
 	init {
 		Settings.ENABLECACHE.listen { selected ->
 			logger.fine("Cache " + (if (selected) "en" else "dis") + "abled")
 			if (selected)
 				FetchTab.writeCache()
 		}
-		
+
 		Settings.UNSTABLE.addListener(object : ChangeListener<Boolean> {
 			override fun changed(o: ObservableValue<out Boolean>, old: Boolean, new: Boolean) {
 				if (new) {
@@ -74,8 +75,8 @@ object Settings : SettingsNode("xerus/monsterutilities") {
 				}
 			}
 		})
-		
+
 		Settings.SKIN.listen { monsterUtilities.scene.applySkin(it) }
 	}
-	
+
 }
