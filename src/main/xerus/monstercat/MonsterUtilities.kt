@@ -102,12 +102,12 @@ fun showErrorSafe(error: Throwable, title: String = "Error") {
 }
 
 class MonsterUtilities : VBox(), JFXMessageDisplay {
-
+	
 	val tabs: MutableList<BaseTab>
 	val tabPane: TabPane
-
+	
 	override val window = App.stage
-
+	
 	init {
 		monsterUtilities = this
 		logger.info("Starting MonsterUtilities")
@@ -115,7 +115,7 @@ class MonsterUtilities : VBox(), JFXMessageDisplay {
 		tabs = ArrayList()
 		val startupTab = Settings.STARTUPTAB.get().takeUnless { it == "Previous" } ?: Settings.LASTTAB()
 		logger.fine("Startup tab: $startupTab")
-
+		
 		fun addTab(tabClass: KClass<out BaseTab>) {
 			try {
 				val baseTab = tabClass.java.newInstance()
@@ -162,15 +162,15 @@ class MonsterUtilities : VBox(), JFXMessageDisplay {
 				showChangelog()
 			}
 		}
-
+		
 		children.add(Player.box)
 		fill(tabPane)
 		if (Settings.AUTOUPDATE())
 			checkForUpdate()
 	}
-
+	
 	inline fun <reified T : BaseTab> tabsByClass() = tabs.mapNotNull { it as? T }
-
+	
 	fun checkForUpdate(userControlled: Boolean = false, unstable: Boolean = isUnstable) {
 		launch {
 			try {
@@ -202,7 +202,7 @@ class MonsterUtilities : VBox(), JFXMessageDisplay {
 			}
 		}
 	}
-
+	
 	private fun update(version: String, unstable: Boolean = false) {
 		val newFile = File(Settings.FILENAMEPATTERN().replace("%version%", version, true)).absoluteFile
 		logger.fine("Update initiated to $newFile")
@@ -218,7 +218,7 @@ class MonsterUtilities : VBox(), JFXMessageDisplay {
 				if (isCancelled)
 					logger.config("Update cancelled, deleting $newFile: ${newFile.delete().to("Success", "FAILED")}")
 			}
-
+			
 			override fun succeeded() {
 				if (isUnstable == unstable) {
 					val jar = File(MonsterUtilities::class.java.protectionDomain.codeSource.location.toURI())
@@ -257,7 +257,7 @@ class MonsterUtilities : VBox(), JFXMessageDisplay {
 			}
 		}
 	}
-
+	
 	fun showIntro() {
 		onFx {
 			val text = Label("""
@@ -274,7 +274,7 @@ class MonsterUtilities : VBox(), JFXMessageDisplay {
 			}.show()
 		}
 	}
-
+	
 	fun showChangelog() {
 		val c = Changelog().apply {
 			version("dev", "pre-Release",
@@ -291,7 +291,7 @@ class MonsterUtilities : VBox(), JFXMessageDisplay {
 							"More filtering options", "Smart column size")
 					.change("Player now has a slick Seekbar inspired by the website",
 							"It can also be controlled via scrolling (suggested by AddiVF)")
-
+			
 			version(0, 3, "UI Rework started", "Genres are now presented as a tree",
 					"Music playing is better integrated", "Fixed some mistakes in the Downloader")
 					.change("Catalog rework", "New, extremely flexible SearchVíew added", "Visible catalog columns can now be changed on-the-fly")
@@ -301,10 +301,10 @@ class MonsterUtilities : VBox(), JFXMessageDisplay {
 							"Prevented silent crashes")
 					.patch("Fixed an issue that prevented the Player from playing older Remixes with featured Artists",
 							"Fixed an issue with the cache preventing immediate downloading")
-
+			
 			version(0, 2, "Interactive Catalog",
 					"Added direct song streaming by double-clicking a Song in the Catalog")
-
+			
 			version(0, 1, "Downloader overhaul", "Added more downloading options & prettified them", "Tweaked many Settings",
 					"Catalog tab is now more flexible", "Implemented dismissable infobar (Only used in the Catalog yet)")
 					.patch("Added Downloader continuator", "Improved the readability of the current Downloader-status and added an \"Estimated time left\"",
@@ -313,16 +313,16 @@ class MonsterUtilities : VBox(), JFXMessageDisplay {
 							"Added capability to split off Album Mixes when downloading", "Fixed various bugs and added some logging")
 					.patch("Added Release caching for faster Release fetching",
 							"Improved Downloader view & cancellation (now with 90% less spasticity!)", "Fixed various bugs")
-
+			
 			version(0, 0, "Offline caching", "Added Changelog", "Fixed offline Catalog caching",
 					"Fixed Genre Tab", "Fixed some small downloading Errors", "Improved Error handling")
 					.patch("Added more downloading options & prettified them", "Tweaked many Settings",
 							"Catalog tab is now more flexible", "Implemented dismissable infobar (Only used in the Catalog yet)")
-
+			
 		}
 		onFx { c.show(App.stage) }
 	}
-
+	
 	override fun showError(error: Throwable, title: String) {
 		logger.severe("$title: $error")
 		onFx {
@@ -332,5 +332,5 @@ class MonsterUtilities : VBox(), JFXMessageDisplay {
 			dialog.show()
 		}
 	}
-
+	
 }

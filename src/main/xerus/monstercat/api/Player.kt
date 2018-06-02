@@ -34,7 +34,7 @@ object Player : FadingHBox(true, targetHeight = 25) {
 		id("seek-bar")
 		setSize(height = 0.0)
 		Settings.PLAYERSEEKBARHEIGHT.listen { if(player != null) transitionToHeight(Settings.PLAYERSEEKBARHEIGHT()) }
-
+		
 		maxWidth = Double.MAX_VALUE
 		val handler = EventHandler<MouseEvent> { event ->
 			if (event.button == MouseButton.PRIMARY) {
@@ -55,21 +55,21 @@ object Player : FadingHBox(true, targetHeight = 25) {
 			}
 		}
 	}
-
+	
 	internal val box = VBox(seekBar, this).apply {
 		id("player")
 		setSize(height = 0.0)
 		opacity = 0.0
 	}
 	override val fader = box.verticalFade(30, -1.0)
-
+	
 	init {
 		box.alignment = Pos.CENTER
 		maxHeight = Double.MAX_VALUE
 		resetNotification()
 		box.visibleProperty().listen { visible -> if (!visible) disposePlayer() }
 	}
-
+	
 	private val label = Label()
 	private fun showText(text: String) {
 		ensureVisible()
@@ -78,7 +78,7 @@ object Player : FadingHBox(true, targetHeight = 25) {
 			label.text = text
 		}
 	}
-
+	
 	private fun showBack(text: String) {
 		checkFx {
 			showText(text)
@@ -88,7 +88,7 @@ object Player : FadingHBox(true, targetHeight = 25) {
 			add(closeButton)
 		}
 	}
-
+	
 	fun resetNotification() {
 		fadeOut()
 		launch {
@@ -103,16 +103,16 @@ object Player : FadingHBox(true, targetHeight = 25) {
 			}
 		}
 	}
-
+	
 	private fun stopPlaying() {
 		resetNotification()
 		disposePlayer()
 	}
-
+	
 	private fun firePlayerListeners() {
 		playerListeners.forEach { it() }
 	}
-
+	
 	private fun disposePlayer() {
 		Settings.ENABLEEQUALIZER.unbind()
 		player?.dispose()
@@ -122,16 +122,16 @@ object Player : FadingHBox(true, targetHeight = 25) {
 			seekBar.transitionToHeight(0.0)
 		}
 	}
-
+	
 	// playing & controls
-
+	
 	private val pauseButton = ToggleButton().id("play-pause").onClick { if (isSelected) player?.pause() else player?.play() }
 	private val stopButton = buttonWithId("stop") { stopPlaying() }
 	private val volumeSlider = Slider(0.0, 1.0, Settings.PLAYERVOLUME()).scrollable(0.05).apply {
 		prefWidth = 100.0
 		valueProperty().addListener { _ -> setVolume() }
 	}
-
+	
 	private fun playing(text: String) {
 		onFx {
 			showText(text)
@@ -143,15 +143,15 @@ object Player : FadingHBox(true, targetHeight = 25) {
 			add(closeButton)
 		}
 	}
-
+	
 	private fun setVolume() {
 		player?.volume = volumeSlider.value.square
 	}
-
+	
 	private var player: MediaPlayer? = null
 	// Listeners are notified when the MediaPlayer is swapped.
 	var playerListeners = mutableSetOf<() -> Unit>()
-
+	
 	fun playTrack(track: Track) {
 		disposePlayer()
 		val hash = track.streamHash ?: run {
@@ -173,9 +173,9 @@ object Player : FadingHBox(true, targetHeight = 25) {
 		getEqualizer()!!.enabledProperty().bind(Settings.ENABLEEQUALIZER)
 		firePlayerListeners()
 	}
-
+	
 	// find tracks and initiate player
-
+	
 	fun play(title: String, artists: String) {
 		launch {
 			showText("Searching for \"$title\"...")
@@ -208,7 +208,7 @@ object Player : FadingHBox(true, targetHeight = 25) {
 			return@launch
 		}
 	}
-
+	
 	fun play(release: Release) {
 		checkFx { showText("Searching for $release") }
 		launch {
@@ -220,7 +220,7 @@ object Player : FadingHBox(true, targetHeight = 25) {
 			play(results, 0)
 		}
 	}
-
+	
 	fun play(tracks: MutableList<Track>, index: Int) {
 		playTrack(tracks[index])
 		onFx {
@@ -231,6 +231,6 @@ object Player : FadingHBox(true, targetHeight = 25) {
 		}
 		player?.setOnEndOfMedia { if (tracks.lastIndex > index) play(tracks, index + 1) else stopPlaying() }
 	}
-
+	
 	fun getEqualizer() = player?.audioEqualizer
 }

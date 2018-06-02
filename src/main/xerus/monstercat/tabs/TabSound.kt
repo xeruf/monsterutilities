@@ -16,15 +16,15 @@ class TabSound : VTab() {
 	var hint: Label? = null
 	var eqBox: HBox? = null
 	var eqModel: MutableList<Double> = mutableListOf()
-
+	
 	init {
 		add(CheckBox("Enable Equalizer").bind(Settings.ENABLEEQUALIZER))
 		Player.playerListeners.add { Platform.runLater(::updateEQBox) }
-
+		
 		hint = Label("Play a song to display the controls")
 		add(hint!!)
 	}
-
+	
 	private fun updateEQBox() {
 		eqBox?.let(children::remove)
 		eqBox = HBox()
@@ -32,7 +32,7 @@ class TabSound : VTab() {
 			// Remove hint once equalizer has been initialized
 			hint?.let(children::remove)
 			hint = null
-
+			
 			// Sync view with equalizer model
 			var i = 0
 			for (band in it.bands) {
@@ -44,7 +44,7 @@ class TabSound : VTab() {
 		}
 		add(eqBox!!)
 	}
-
+	
 	private fun createEQBandView(band: EqualizerBand, value: Double, listener: (Double) -> Unit): VBox {
 		return VBox().apply {
 			children.addAll(
@@ -58,7 +58,7 @@ class TabSound : VTab() {
 			)
 		}
 	}
-
+	
 	private fun readEQValues(equalizer: AudioEqualizer): List<Double> {
 		return equalizer.bands.map { it.gain }.toList()
 	}
