@@ -110,7 +110,7 @@ object Player : FadingHBox(true, targetHeight = 25) {
 	}
 	
 	private fun firePlayerListeners() {
-		playerListeners.forEach { it() }
+		playerListeners.forEach { it(player) }
 	}
 	
 	private fun disposePlayer() {
@@ -150,7 +150,7 @@ object Player : FadingHBox(true, targetHeight = 25) {
 	
 	private var player: MediaPlayer? = null
 	// Listeners are notified when the MediaPlayer is swapped.
-	var playerListeners = mutableSetOf<() -> Unit>()
+	val playerListeners = mutableListOf<(MediaPlayer?) -> Unit>()
 	
 	fun playTrack(track: Track) {
 		disposePlayer()
