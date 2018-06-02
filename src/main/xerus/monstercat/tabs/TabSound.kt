@@ -21,14 +21,13 @@ class TabSound : VTab() {
 		add(CheckBox("Enable Equalizer").bind(Settings.ENABLEEQUALIZER))
 		Player.playerListeners.add { Platform.runLater(::updateEQBox) }
 		
-		hint = Label("Play a song to display the controls")
-		add(hint!!)
+		hint = Label("Play a song to display the controls").run(::add)
 	}
 	
 	private fun updateEQBox() {
 		eqBox?.let(children::remove)
 		eqBox = HBox()
-		Player.getEqualizer()?.let {
+		Player.equalizer?.let {
 			// Remove hint once equalizer has been initialized
 			hint?.let(children::remove)
 			hint = null
@@ -52,14 +51,10 @@ class TabSound : VTab() {
 					setOrientation(Orientation.VERTICAL)
 					band.gainProperty().bind(valueProperty())
 					valueProperty().set(value)
-					valueProperty().addListener { _, _, newValue -> listener(newValue as Double) }
+					valueProperty().listen { listener(it as Double) }
 				},
 				Label(band.centerFrequency.toString())
 			)
 		}
-	}
-	
-	private fun readEQValues(equalizer: AudioEqualizer): List<Double> {
-		return equalizer.bands.map { it.gain }.toList()
 	}
 }

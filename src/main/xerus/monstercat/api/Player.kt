@@ -170,7 +170,7 @@ object Player : FadingHBox(true, targetHeight = 25) {
 				seekBar.transitionToHeight(Settings.PLAYERSEEKBARHEIGHT(), 1.0)
 			}
 		}
-		getEqualizer()!!.enabledProperty().bind(Settings.ENABLEEQUALIZER)
+		equalizer!!.enabledProperty().bind(Settings.ENABLEEQUALIZER)
 		firePlayerListeners()
 	}
 	
@@ -232,5 +232,6 @@ object Player : FadingHBox(true, targetHeight = 25) {
 		player?.setOnEndOfMedia { if (tracks.lastIndex > index) play(tracks, index + 1) else stopPlaying() }
 	}
 	
-	fun getEqualizer() = player?.audioEqualizer
+	val equalizer
+		get() = player?.audioEqualizer
 }
