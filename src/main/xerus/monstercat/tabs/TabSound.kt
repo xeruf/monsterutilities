@@ -56,7 +56,7 @@ class TabSound : VTab() {
 						band.gainProperty().bind(valueProperty())
 						valueProperty().set(value)
 						valueProperty().listen { listener(it as Double) }
-					}.scrollable(),
+					}.scrollable(1.0),
 					Label(band.centerFrequency.toString())
 			)
 		}

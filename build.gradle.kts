@@ -42,10 +42,12 @@ application {
 repositories {
 	jcenter()
 	maven(url = "http://maven.bluexin.be/repository/snapshots/")
+	maven(url = "https://jitpack.io")
 }
 
 dependencies {
-	compile("xerus.util", "javafx")
+	// TODO
+	compile("com.github.fwcd", "util", "master-SNAPSHOT") // Always builds the current version
 	compile(kotlin("stdlib-jdk8"))
 	
 	compile("org.controlsfx", "controlsfx", "8.40.+")
