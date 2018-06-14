@@ -46,8 +46,7 @@ repositories {
 }
 
 dependencies {
-	// TODO
-	compile("com.github.fwcd", "util", "master-SNAPSHOT") // Always builds the current version
+	compile("com.github.Xerus2000", "util", "master-SNAPSHOT") // Always builds the current version
 	compile(kotlin("stdlib-jdk8"))
 	
 	compile("org.controlsfx", "controlsfx", "8.40.+")
