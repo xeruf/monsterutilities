@@ -16,6 +16,7 @@ plugins {
 	application
 	id("com.github.johnrengelman.shadow") version "2.0.4"
 	id("com.github.ben-manes.versions") version "0.19.0"
+	id("com.github.breadmoirai.github-release") version "2.0.1"
 }
 
 // source directories
