@@ -7,7 +7,8 @@ import java.nio.file.*
 import java.util.Scanner
 
 val isUnstable = properties["release"] == null
-version = "dev" + Scanner(Runtime.getRuntime().exec("git rev-list --count HEAD").inputStream).next() +
+val commitNumber = Scanner(Runtime.getRuntime().exec("git rev-list --count HEAD").inputStream).next()
+version = "dev" + commitNumber +
 		"-" + Scanner(Runtime.getRuntime().exec("git rev-parse --short HEAD").inputStream).next()
 file("src/resources/version").writeText(version as String)
 
@@ -26,14 +27,6 @@ sourceSets {
 		resources.srcDir("src/resources")
 	}
 	getByName("test").java.srcDir("src/test")
-}
-
-
-// configure kotlin
-kotlin.experimental.coroutines = Coroutines.ENABLE
-val kotlinVersion: String by extra {
-	buildscript.configurations["classpath"].resolvedConfiguration.firstLevelModuleDependencies
-			.find { it.moduleName == "org.jetbrains.kotlin.jvm.gradle.plugin" }!!.moduleVersion
 }
 
 application {
@@ -63,7 +56,8 @@ dependencies {
 	testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", "5.2.0")
 }
 
-val file
+kotlin.experimental.coroutines = Coroutines.ENABLE
+val jarFile
 	get() = "MonsterUtilities-$version.jar"
 
 val MAIN = "_Main"
@@ -82,7 +76,7 @@ tasks {
 		baseName = "MonsterUtilities"
 		classifier = ""
 		destinationDir = file(".")
-		doLast { file(file).setExecutable(true) }
+		doLast { file(jarFile).setExecutable(true) }
 	}
 	
 	create<Exec>("release") {
@@ -99,7 +93,7 @@ tasks {
 		commandLine("lftp", "-c", """set ftp:ssl-allow true; set ssl:verify-certificate no;
 			open -u ${properties["credentials.ftp"]} -e $s"
 			cd /www/downloads; ${if (properties["noversion"] == null) "put $path; put $pathLatest;" else ""}
-			cd ./files; put $file;
+			cd ./files; put $jarFile;
 			quit$s" monsterutilities.bplaced.net""".filter { it != '\t' && it != '\n' })
 	}
 	
@@ -110,13 +104,24 @@ tasks {
 	replace("jar", Delete::class).run {
 		group = MAIN
 		dependsOn("shadowJar")
-		setDelete(file(".").listFiles { f -> f.name.run { startsWith("${rootProject.name}-") && endsWith("jar") && this != file } })
+		setDelete(file(".").listFiles { f -> f.name.run { startsWith("${rootProject.name}-") && endsWith("jar") && this != jarFile } })
 	}
 	
 	"test"(Test::class) {
 		useJUnitPlatform()
 	}
 	
+}
+
+githubRelease {
+	setToken(property("github.token")?.toString())
+	setOwner("Xerus2000")
+	setReleaseAssets(jarFile)
+	
+	setTagName(if(isUnstable) "dev$commitNumber" else version.toString())
+	setBody(properties["m"]?.toString())
+	setReleaseName("Dev $commitNumber" + if (properties["n"] != null) " - ${properties["n"]}" else "")
+	setPrerelease(isUnstable)
 }
 
 println("Java version: ${JavaVersion.current()}")
