@@ -114,7 +114,7 @@ tasks {
 }
 
 githubRelease {
-	setToken(property("github.token")?.toString())
+	setToken(properties["github.token"]?.toString())
 	setOwner("Xerus2000")
 	setReleaseAssets(jarFile)
 	
