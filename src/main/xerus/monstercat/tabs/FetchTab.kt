@@ -12,14 +12,11 @@ import xerus.ktutil.javafx.*
 import xerus.ktutil.javafx.ui.controls.Snackbar
 import xerus.ktutil.readObject
 import xerus.ktutil.writeObject
+import xerus.monstercat.*
 import xerus.monstercat.Sheets.fetchMCatalogTab
-import xerus.monstercat.Settings
 import xerus.monstercat.api.Releases
-import xerus.monstercat.cacheDir
-import xerus.monstercat.monsterUtilities
 import java.io.*
 
-const val snackbarTextCache = "MCatalog was restored from cache"
 
 abstract class FetchTab : VTab() {
 	
@@ -60,7 +57,7 @@ abstract class FetchTab : VTab() {
 	
 	init {
 		onFx {
-			if(this !is TabGenres)
+			if (this !is TabGenres)
 				add(notification)
 			setPlaceholder(Label("Loading..."))
 		}
@@ -89,7 +86,10 @@ abstract class FetchTab : VTab() {
 	// region caching
 	
 	private val cacheFile: File
-		get() = cacheDir.resolve("MCatalog $tabName")
+		get() = cacheDir.resolve(tabName)
+	
+	protected val snackbarTextCache
+		get() = "$tabName was restored from cache"
 	
 	private fun writeCache(sheet: Any) {
 		if (!Settings.ENABLECACHE())
@@ -129,7 +129,7 @@ abstract class FetchTab : VTab() {
 	
 	companion object {
 		init {
-			Settings.GENRECOLORS.addListener { _ -> viewRefresher() }
+			Settings.GENRECOLORINTENSITY.addListener { _ -> viewRefresher() }
 		}
 		
 		private val viewRefresher = DelayedRefresher(400) {
