@@ -15,44 +15,37 @@ import xerus.ktutil.javafx.ui.controls.Snackbar
 import xerus.ktutil.readToObject
 import xerus.ktutil.writeToFile
 import xerus.monstercat.*
-import xerus.monstercat.Sheets.fetchMCatalogTab
+import xerus.monstercat.Sheets.fetchSheet
 import xerus.monstercat.api.Releases
-import java.io.*
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.IOException
 
-abstract class FetchTab : VTab() {
+abstract class FetchTab(val sheet: String, val request: String = "") : VTab() {
 	
 	val cols = RoughMap<Int>()
 	val data: ObservableList<List<String>> = FXCollections.observableArrayList()
 	
-	protected open val request: String = ""
 	private val retryButton: Button = createButton("Try again") {
 		setPlaceholder(Label("Fetching..."))
 		sheetFetcher()
 	}
 	
 	val sheetFetcher = SimpleRefresher {
-		if (this::class != TabGenres::class) {
-			onFx { setPlaceholder(Label("Fetching...")) }
-			logger.debug("Fetching $tabName")
-			val sheet = fetchMCatalogTab(tabName, request)
-			if (sheet != null) {
-				readSheet(sheet)
-				writeCache(sheet)
-			} else if (data.isEmpty())
-				restoreCache()
-			onFx {
-				if (data.isEmpty()) {
-					logger.debug("Showing retry button for $tabName because data is empty")
-					setPlaceholder(retryButton)
-				} else
-					setPlaceholder(Label("No matches found!"))
-			}
-		} else {
-			// todo use Genre sheet
-			onFx { setPlaceholder(Label("No matches found!")) }
-			logger.debug("Loading $tabName")
-			@Suppress("UNCHECKED_CAST")
-			readSheet(ObjectInputStream(TabGenres::class.java.getResourceAsStream("/Genres")).readObject() as MutableList<List<String>>)
+		onFx { setPlaceholder(Label("Fetching...")) }
+		logger.debug("Fetching $tabName")
+		val sheet = fetchSheet(sheet, tabName, request)
+		if (sheet != null) {
+			readSheet(sheet)
+			writeCache(sheet)
+		} else if (data.isEmpty())
+			restoreCache()
+		onFx {
+			if (data.isEmpty()) {
+				logger.debug("Showing retry button for $tabName because data is empty")
+				setPlaceholder(retryButton)
+			} else
+				setPlaceholder(Label("No matches found!"))
 		}
 	}
 	

@@ -3,8 +3,9 @@ package xerus.monstercat.tabs
 import javafx.scene.Node
 import xerus.ktutil.javafx.styleClass
 import xerus.ktutil.javafx.ui.controls.FilteredTableView
+import xerus.monstercat.Sheets
 
-open class TableTab : FetchTab() {
+open class TableTab : FetchTab(Sheets.MCATALOG) {
 	
 	val table = FilteredTableView(data, true)
 	val predicate = table.predicate.apply { addListener { _ -> showFoundSnackbar() } }
