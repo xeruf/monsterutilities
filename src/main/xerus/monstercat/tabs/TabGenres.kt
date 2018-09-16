@@ -13,7 +13,6 @@ import xerus.ktutil.javafx.*
 import xerus.ktutil.javafx.ui.FilterableTreeItem
 import xerus.monstercat.Settings.GENRECOLORINTENSITY
 import xerus.monstercat.Sheets
-import xerus.monstercat.logger
 
 val genreColors = RoughMap<String>()
 val genreColor = { item: String? ->
@@ -45,7 +44,7 @@ class TabGenres : FetchTab(Sheets.GENRESHEET, "A:H") {
 				val row = Row(10, *list.toTypedArray())
 				val nextLevel = row.indexOfFirst { it.isNotEmpty() }
 				if (nextLevel < curLevel)
-					repeat(curLevel - nextLevel) { cur = cur.parent as? FilterableTreeItem<String> ?: cur.also { logger.warning("$cur should have a parent!") } }
+					repeat(curLevel - nextLevel) { cur = cur.parent as? FilterableTreeItem<String> ?: cur.also { logger.warn("$cur should have a parent!") } }
 				
 				/*if (hex != null) {
 					if (nextLevel == 0) {

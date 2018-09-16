@@ -5,20 +5,21 @@ import javafx.collections.ObservableList
 import javafx.scene.Node
 import javafx.scene.control.Button
 import javafx.scene.control.Label
+import mu.KotlinLogging
+import org.slf4j.Logger
 import xerus.ktutil.helpers.DelayedRefresher
 import xerus.ktutil.helpers.RoughMap
 import xerus.ktutil.helpers.SimpleRefresher
 import xerus.ktutil.javafx.*
 import xerus.ktutil.javafx.ui.controls.Snackbar
-import xerus.ktutil.readObject
-import xerus.ktutil.writeObject
+import xerus.ktutil.readToObject
+import xerus.ktutil.writeToFile
 import xerus.monstercat.*
 import xerus.monstercat.Sheets.fetchSheet
 import xerus.monstercat.api.Releases
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
-
 
 abstract class FetchTab(val sheet: String, val request: String = "") : VTab() {
 	
@@ -32,7 +33,7 @@ abstract class FetchTab(val sheet: String, val request: String = "") : VTab() {
 	
 	val sheetFetcher = SimpleRefresher {
 		onFx { setPlaceholder(Label("Fetching...")) }
-		logger.fine("Fetching $tabName")
+		logger.debug("Fetching $tabName")
 		val sheet = fetchSheet(sheet, tabName, request)
 		if (sheet != null) {
 			readSheet(sheet)
@@ -41,7 +42,7 @@ abstract class FetchTab(val sheet: String, val request: String = "") : VTab() {
 			restoreCache()
 		onFx {
 			if (data.isEmpty()) {
-				logger.finer("Showing retry button for $tabName because data is empty")
+				logger.debug("Showing retry button for $tabName because data is empty")
 				setPlaceholder(retryButton)
 			} else
 				setPlaceholder(Label("No matches found!"))
@@ -87,9 +88,9 @@ abstract class FetchTab(val sheet: String, val request: String = "") : VTab() {
 	private fun writeCache(sheet: Any) {
 		if (!Settings.ENABLECACHE())
 			return
-		logger.fine("Writing cache file $cacheFile")
+		logger.debug("Writing cache file $cacheFile")
 		try {
-			writeObject(cacheFile, sheet)
+			sheet.writeToFile(cacheFile)
 		} catch (e: IOException) {
 			monsterUtilities.showError(e, "Couldn't write $tabName cache!")
 		}
@@ -99,12 +100,12 @@ abstract class FetchTab(val sheet: String, val request: String = "") : VTab() {
 		if (!Settings.ENABLECACHE())
 			return
 		try {
-			readSheet(readObject(cacheFile))
-			logger.fine("Restored cache file $cacheFile")
+			readSheet(cacheFile.readToObject())
+			logger.debug("Restored cache file $cacheFile")
 			showNotification(snackbarTextCache)
 		} catch (ignored: FileNotFoundException) {
 		} catch (e: Throwable) {
-			logger.throwing(javaClass.simpleName, "restoreCache", e)
+			logger.error("$this failed to restore Cache", e)
 			cacheFile.delete()
 		}
 	}
