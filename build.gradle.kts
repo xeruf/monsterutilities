@@ -4,6 +4,11 @@ import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.IOException
 import java.util.*
+import org.jetbrains.kotlin.gradle.dsl.Coroutines
+import java.io.ByteArrayOutputStream
+import java.nio.file.*
+import java.util.Scanner
+import com.alkimiapps.gradle.plugin.dplink.DplinkTask
 
 val isUnstable = properties["release"] == null
 var commitNumber: String = ""
@@ -22,6 +27,7 @@ plugins {
 	application
 	id("com.github.johnrengelman.shadow") version "5.1.0"
 	id("com.github.breadmoirai.github-release") version "2.2.9"
+	id("com.alkimiapps.gradle-dplink-plugin") version "0.4"
 	id("com.github.ben-manes.versions") version "0.21.0"
 }
 
@@ -49,10 +55,23 @@ repositories {
 dependencies {
 	implementation(kotlin("reflect"))
 	
-	implementation("com.github.Xerus2000.util", "javafx", "61043c3eb09a7f0a3d3b2227bf2dac463958d237")
-	implementation("org.controlsfx", "controlsfx", "8.40.+")
+	val os = org.gradle.internal.os.OperatingSystem.current()
+	val classifier = when {
+		os.isLinux -> "linux"
+		os.isMacOsX -> "mac"
+		os.isWindows -> "win"
+		else -> throw Exception("Unable to determine javafx dependency classifier due to unfamiliar system=$os")
+	}
+	implementation("org.openjfx:javafx-base:$version:$classifier")
+	implementation("org.openjfx:javafx-controls:$version:$classifier")
+	implementation("org.openjfx:javafx-graphics:$version:$classifier")
+	implementation("org.openjfx:javafx-media:$version:$classifier")
 	
-	implementation("ch.qos.logback", "logback-classic", "1.2.+")
+	implementation("com.github.Xerus2000.util", "javafx", "61043c3eb09a7f0a3d3b2227bf2dac463958d237")
+	implementation("org.controlsfx", "controlsfx", "11.0.0")
+	
+	api("org.slf4j", "slf4j-api", "1.8.0-beta4")
+	implementation("ch.qos.logback", "logback-classic", "1.3.+")
 	implementation("io.github.microutils", "kotlin-logging", "1.6.+")
 	
 	implementation("be.bluexin", "drpc4k", "0.9")
@@ -137,6 +156,20 @@ tasks {
 	
 	test {
 		useJUnitPlatform()
+	}
+	
+	withType<DplinkTask> {
+		scriptsLocation = "monsterutilities"
+		libs = files("build/libs", configurations.default)
+		mainClassName = application.mainClassName
+		executableJarName = jarFile
+	}
+	
+	withType<Jar> {
+		manifest {
+			attributes["Main-Class"] = application.mainClassName
+			attributes["Class-Path"] = configurations.default.get().joinToString(" ") { it.name }
+		}
 	}
 	
 }

@@ -10,14 +10,12 @@ import xerus.ktutil.SystemUtils
 import xerus.ktutil.getResource
 import xerus.ktutil.javafx.onFx
 import xerus.ktutil.javafx.ui.App
-import xerus.ktutil.ui.SimpleFrame
 import java.io.File
 import java.net.URL
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.ThreadFactory
 import java.util.concurrent.atomic.AtomicInteger
-import javax.swing.JTextArea
 
 val VERSION = getResource("version")!!.readText()
 val isUnstable = VERSION.contains('-')
@@ -42,13 +40,8 @@ val jarLocation: URL = MonsterUtilities::class.java.protectionDomain.codeSource.
 fun main(args: Array<String>) {
 	initLogging(args)
 	val logger = KotlinLogging.logger {}
+	logger.info("Version: $VERSION, Java version: ${SystemUtils.javaVersion}, ")
 	logger.debug("Commandline arguments: ${args.joinToString(", ", "[", "]")}")
-	
-	if(!SystemUtils.javaVersion.startsWith("1.8")) {
-		SimpleFrame { add(JTextArea("Please install and use Java 8!\nThe current version is ${SystemUtils.javaVersion}").apply { isEditable = false }) }
-		return
-	}
-	logger.info("Version: $VERSION, Java version: ${SystemUtils.javaVersion}")
 	
 	logger.info("Initializing Google Sheets API Service")
 	Sheets.initService("MonsterUtilities")
