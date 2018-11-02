@@ -13,7 +13,7 @@ version = "dev" + Scanner(Runtime.getRuntime().exec("git rev-list --count HEAD")
 file("src/resources/version").writeText(version as String)
 
 plugins {
-	kotlin("jvm") version "1.2.70"
+	kotlin("jvm") version "1.3.0"
 	application
 	id("com.github.johnrengelman.shadow") version "2.0.4"
 	id("com.github.ben-manes.versions") version "0.20.0"
@@ -26,14 +26,6 @@ sourceSets {
 		resources.srcDir("src/resources")
 	}
 	getByName("test").java.srcDir("src/test")
-}
-
-
-// configure kotlin
-kotlin.experimental.coroutines = Coroutines.ENABLE
-val kotlinVersion: String by extra {
-	buildscript.configurations["classpath"].resolvedConfiguration.firstLevelModuleDependencies
-			.find { it.moduleName == "org.jetbrains.kotlin.jvm.gradle.plugin" }!!.moduleVersion
 }
 
 application {
