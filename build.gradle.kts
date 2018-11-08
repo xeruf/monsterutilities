@@ -43,12 +43,12 @@ dependencies {
 	implementation(kotlin("reflect"))
 	
 	implementation("com.github.Xerus2000.util", "javafx", "-SNAPSHOT")
-	implementation("org.controlsfx", "controlsfx", "8.40.14")
+	implementation("org.controlsfx", "controlsfx", "8.40.+")
 	
-	implementation("ch.qos.logback", "logback-classic", "1.2.3")
-	implementation("com.github.Bluexin", "drpc4k", "384e143")
+	implementation("ch.qos.logback", "logback-classic", "1.2.+")
+	implementation("com.github.Bluexin", "drpc4k", "16b0c60")
 	implementation("org.apache.httpcomponents", "httpmime", "4.5.+")
-	implementation("com.google.apis", "google-api-services-sheets", "v4-rev542-1.25.0")
+	implementation("com.google.apis", "google-api-services-sheets", "v4-rev551-1.25.0")
 	
 	val junitVersion = "5.3.1"
 	testCompile("org.junit.jupiter", "junit-jupiter-api", junitVersion)
