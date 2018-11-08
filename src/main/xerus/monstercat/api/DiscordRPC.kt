@@ -2,7 +2,10 @@ package xerus.monstercat.api
 
 import be.bluexin.drpc4k.jna.DiscordRichPresence
 import be.bluexin.drpc4k.jna.RPCHandler
-import kotlinx.coroutines.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import xerus.ktutil.getResource
 import xerus.ktutil.javafx.properties.listen
@@ -28,9 +31,7 @@ object DiscordRPC {
 			if (!RPCHandler.connected.get()) {
 				RPCHandler.onReady = {
 					logger.info("Ready")
-					runBlocking {
-						RPCHandler.updatePresence(idlePresence)
-					}
+					RPCHandler.updatePresence(idlePresence)
 				}
 				RPCHandler.onErrored = { errorCode, message -> logger.warn("Discord RPC Error #$errorCode, $message") }
 				RPCHandler.connect(apiKey)
@@ -50,12 +51,10 @@ object DiscordRPC {
 	}
 	
 	fun updatePresence(presence: DiscordRichPresence) {
-		runBlocking {
-			RPCHandler.ifConnectedOrLater {
-				RPCHandler.updatePresence(presence)
-				if (presence != idlePresence)
-					logger.debug("Changed Rich Presence to '${presence.details} - ${presence.state}'")
-			}
+		RPCHandler.ifConnectedOrLater {
+			RPCHandler.updatePresence(presence)
+			if (presence != idlePresence)
+				logger.debug("Changed Rich Presence to '${presence.details} - ${presence.state}'")
 		}
 	}
 	

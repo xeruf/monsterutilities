@@ -36,7 +36,7 @@ application {
 repositories {
 	jcenter()
 	maven("https://jitpack.io")
-	maven("http://maven.bluexin.be/repository/snapshots/")
+	maven("https://oss.jfrog.org/simple/libs-snapshot")
 }
 
 dependencies {
@@ -46,7 +46,7 @@ dependencies {
 	implementation("org.controlsfx", "controlsfx", "8.40.14")
 	
 	implementation("ch.qos.logback", "logback-classic", "1.2.3")
-	implementation("com.github.Bluexin", "drpc4k", "-SNAPSHOT")
+	implementation("com.github.Bluexin", "drpc4k", "384e143")
 	implementation("org.apache.httpcomponents", "httpmime", "4.5.+")
 	implementation("com.google.apis", "google-api-services-sheets", "v4-rev542-1.25.0")
 	
