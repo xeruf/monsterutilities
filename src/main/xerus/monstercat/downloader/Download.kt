@@ -95,6 +95,7 @@ abstract class Download(val item: MusicItem, val coverUrl: String) : Task<Unit>(
 				length = inputStream.read(buffer)
 			}
 			if (!isCancelled) {
+				output.close()
 				file.delete()
 				partFile.renameTo(file)
 			} else {
