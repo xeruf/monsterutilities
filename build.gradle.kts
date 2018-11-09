@@ -1,4 +1,5 @@
-import org.gradle.internal.os.OperatingSystem;
+import com.github.jengelman.gradle.plugins.shadow.internal.JavaJarExec
+import org.gradle.internal.os.OperatingSystem
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.dsl.Coroutines
@@ -13,10 +14,10 @@ version = "dev" + commitNumber +
 file("src/resources/version").writeText(version as String)
 
 plugins {
-	kotlin("jvm") version "1.2.61"
+	kotlin("jvm") version "1.3.0"
 	application
 	id("com.github.johnrengelman.shadow") version "2.0.4"
-	id("com.github.ben-manes.versions") version "0.19.0"
+	id("com.github.ben-manes.versions") version "0.20.0"
 	id("com.github.breadmoirai.github-release") version "2.0.1"
 }
 
@@ -37,50 +38,53 @@ application {
 repositories {
 	jcenter()
 	maven("https://jitpack.io")
-	maven("http://maven.bluexin.be/repository/snapshots/")
+	maven("https://oss.jfrog.org/simple/libs-snapshot")
 }
 
 dependencies {
-	compile("com.github.Xerus2000", "util", "master-SNAPSHOT")
-	compile(kotlin("stdlib-jdk8"))
-	compile(kotlin("reflect"))
+	implementation(kotlin("reflect"))
 	
-	compile("org.controlsfx", "controlsfx", "8.40.14")
+	implementation("com.github.Xerus2000.util", "javafx", "-SNAPSHOT")
+	implementation("org.controlsfx", "controlsfx", "8.40.+")
 	
-	compile("be.bluexin", "drpc4k", "0.6-SNAPSHOT")
+	implementation("ch.qos.logback", "logback-classic", "1.2.+")
+	implementation("com.github.Bluexin", "drpc4k", "16b0c60")
+	implementation("org.apache.httpcomponents", "httpmime", "4.5.+")
+	implementation("com.google.apis", "google-api-services-sheets", "v4-rev551-1.25.0")
 	
-	compile("org.apache.httpcomponents", "httpmime", "4.5.5")
-	compile("com.google.apis", "google-api-services-sheets", "v4-rev527-1.23.0")
-	
-	testCompile("org.junit.jupiter", "junit-jupiter-api", "5.2.0")
-	testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", "5.2.0")
+	val junitVersion = "5.3.1"
+	testCompile("org.junit.jupiter", "junit-jupiter-api", junitVersion)
+	testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", junitVersion)
 }
 
-kotlin.experimental.coroutines = Coroutines.ENABLE
 val jarFile
-	get() = "MonsterUtilities-$version.jar"
+	get() = "$name-$version.jar"
 
 val MAIN = "_Main"
 tasks {
 	
-	getByName("runShadow").group = MAIN
-	getByName("startShadowScripts").group = "distribution"
-	
-	"run"(JavaExec::class) {
-		group = MAIN
-		// Usage: gradle run -Dargs="FINE save"
-		args = System.getProperty("args", "").split(" ")
+	arrayOf(getByName<JavaExec>("run"), getByName<JavaExec>("runShadow")).forEach {
+		it.group = MAIN
+		it.args = System.getProperty("args", "--loglevel debug").split(" ")
 	}
 	
-	"shadowJar"(ShadowJar::class) {
-		baseName = "MonsterUtilities"
+	val shadowJar by getting(ShadowJar::class) {
+		group = MAIN
 		classifier = ""
 		destinationDir = file(".")
-		doLast { file(jarFile).setExecutable(true) }
+		doFirst {
+			destinationDir.listFiles().forEach {
+				if (it.name.endsWith("jar"))
+					it.delete()
+			}
+		}
+		doLast {
+			outputs.files.singleFile.setExecutable(true)
+		}
 	}
 	
 	create<Exec>("release") {
-		dependsOn("jar")
+		dependsOn(shadowJar)
 		group = MAIN
 		val path = file("../monsterutilities-extras/website/downloads/" + if (isUnstable) "unstable" else "latest")
 		val pathLatest = path.resolveSibling("latest") // TODO temporary workaround until real release
@@ -92,8 +96,8 @@ tasks {
 		val s = if (OperatingSystem.current().isWindows) "\\" else ""
 		commandLine("lftp", "-c", """set ftp:ssl-allow true; set ssl:verify-certificate no;
 			open -u ${properties["credentials.ftp"]} -e $s"
+			cd /www/downloads/files; put $jarFile;
 			cd /www/downloads; ${if (properties["noversion"] == null) "put $path; put $pathLatest;" else ""}
-			cd ./files; put $jarFile;
 			quit$s" monsterutilities.bplaced.net""".filter { it != '\t' && it != '\n' })
 	}
 	
@@ -101,13 +105,7 @@ tasks {
 		kotlinOptions.jvmTarget = "1.8"
 	}
 	
-	replace("jar", Delete::class).run {
-		group = MAIN
-		dependsOn("shadowJar")
-		setDelete(file(".").listFiles { f -> f.name.run { startsWith("MonsterUtilities-") && endsWith("jar") && this != jarFile } })
-	}
-	
-	"test"(Test::class) {
+	withType<Test> {
 		useJUnitPlatform()
 	}
 	
@@ -118,7 +116,7 @@ githubRelease {
 	setOwner("Xerus2000")
 	setReleaseAssets(jarFile)
 	
-	setTagName(if(isUnstable) "dev$commitNumber" else version.toString())
+	setTagName(version.toString())
 	setBody(properties["m"]?.toString())
 	setReleaseName("Dev $commitNumber" + if (properties["n"] != null) " - ${properties["n"]}" else "")
 	setPrerelease(isUnstable)

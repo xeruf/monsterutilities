@@ -1,6 +1,7 @@
 package xerus.monstercat.downloader
 
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import xerus.ktutil.javafx.controlsfx.FilterableCheckTreeView
 import xerus.ktutil.javafx.onFx
 import xerus.ktutil.javafx.ui.FilterableTreeItem
@@ -31,7 +32,7 @@ abstract class SongView<T : MusicItem>(root: T) : FilterableCheckTreeView<T>(roo
 	}
 	
 	fun load() {
-		launch {
+		GlobalScope.launch {
 			fetchItems()
 			onFx {
 				onReady()

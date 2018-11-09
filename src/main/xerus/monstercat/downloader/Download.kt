@@ -2,12 +2,12 @@ package xerus.monstercat.downloader
 
 import com.google.common.io.CountingInputStream
 import javafx.concurrent.Task
+import mu.KotlinLogging
 import xerus.ktutil.*
 import xerus.monstercat.api.APIConnection
 import xerus.monstercat.api.response.MusicItem
 import xerus.monstercat.api.response.Release
 import xerus.monstercat.api.response.Track
-import xerus.monstercat.logger
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.nio.file.Path
@@ -28,7 +28,7 @@ fun MusicItem.folder(): Path = basePath.resolve(when {
 })
 
 fun Release.path(): Path = if (isMulti) folder() else folder().resolve(ReleaseFile("${renderedArtists.nullIfEmpty()
-		?: "Monstercat"} - 1 $title").toFileName().addFormatSuffix())
+																					  ?: "Monstercat"} - 1 $title").toFileName().addFormatSuffix())
 
 fun Track.path(): Path = folder().createDirs().resolve(toFileName().addFormatSuffix())
 
@@ -36,6 +36,8 @@ private inline val basePath
 	get() = DOWNLOADDIR()
 
 private fun String.addFormatSuffix() = "$this.${QUALITY().split('_')[0]}"
+
+private val logger = KotlinLogging.logger { }
 
 abstract class Download(val item: MusicItem, val coverUrl: String) : Task<Unit>() {
 	
@@ -73,33 +75,21 @@ abstract class Download(val item: MusicItem, val coverUrl: String) : Task<Unit>(
 			connection.abort()
 	}
 	
-	private val buffer = ByteArray(1024)
 	protected fun downloadFile(path: Path) {
 		val file = path.toFile()
-		logger.finest("Downloading $file")
+		logger.trace("Downloading $file")
 		updateMessage(file.name)
+		
 		val partFile = file.resolveSibling(file.name + ".part")
-		val output = FileOutputStream(partFile)
-		try {
-			var length = inputStream.read(buffer)
-			while (length > 0) {
-				output.write(buffer, 0, length)
-				updateProgress(inputStream.count)
-				if (isCancelled) {
-					output.close()
-					partFile.delete()
-					return
-				}
-				length = inputStream.read(buffer)
-			}
-			if (!isCancelled) {
-				file.delete()
-				partFile.renameTo(file)
-			}
-		} catch (e: Exception) {
-			logger.throwing("Download", "downloadFile", e)
-		} finally {
-			output.close()
+		inputStream.copyTo(FileOutputStream(partFile), closeOut = true) {
+			updateProgress(inputStream.count)
+			isCancelled
+		}
+		if (isCancelled) {
+			partFile.delete()
+		} else {
+			file.delete()
+			partFile.renameTo(file)
 		}
 	}
 	
@@ -113,10 +103,10 @@ class ReleaseDownload(private val release: Release) : Download(release, release.
 	
 	override fun download() {
 		val folder = release.folder()
-		val part = folder.resolveSibling(folder.fileName.toString() + ".part")
-		val path =
+		val partFolder = folder.resolveSibling(folder.fileName.toString() + ".part")
+		val downloadFolder =
 				if (!folder.exists())
-					part.createDirs()
+					partFolder.createDirs()
 				else
 					folder
 		val zis = createConnection(release.id, { ZipInputStream(it) })
@@ -129,20 +119,20 @@ class ReleaseDownload(private val release: Release) : Download(release, release.
 			if (name == "cover.false" || (name.contains("cover.") && (DOWNLOADCOVERS() == 0 || DOWNLOADCOVERS() == 1 && !release.isMulti)))
 				continue
 			val target = when {
-				name.contains("cover.") -> path.resolve(name)
+				name.contains("cover.") -> downloadFolder.resolve(name)
 				name.contains("Album Mix") ->
 					when (ALBUMMIXES()) {
 						"Separate" -> resolve(name, basePath.resolve("Mixes").createDirs())
 						"Exclude" -> continue@zip
-						else -> resolve(name, path)
+						else -> resolve(name, downloadFolder)
 					}
-				else -> resolve(name, path)
+				else -> resolve(name, downloadFolder)
 			}
 			downloadFile(target)
 		} while (!isCancelled)
-		if (!isCancelled && part.exists()) {
+		if (!isCancelled && partFolder.exists()) {
 			folder.toFile().deleteRecursively()
-			part.renameTo(folder)
+			partFolder.renameTo(folder)
 		}
 	}
 	
