@@ -24,7 +24,7 @@ deploy:
   api_key: "$GH_TOKEN"
   file_glob: true
   file:
-    - *.jar
+    - ./*.jar
   skip_cleanup: true
   on:
     tags: true
