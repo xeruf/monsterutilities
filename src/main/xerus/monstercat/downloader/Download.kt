@@ -24,7 +24,7 @@ fun Track.toFileName(inAlbum: Boolean) =
 	toString(if(inAlbum) ALBUMTRACKNAMEPATTERN() else TRACKNAMEPATTERN()).replace(':', '꞉').replaceIllegalFileChars()
 
 fun Release.downloadFolder(): Path = basePath.resolve(when {
-	isMulti() -> toString(DOWNLOADDIRALBUM()).replaceIllegalFileChars() // Album, Monstercat Collection
+	isMulti() -> toString(DOWNLOADDIRALBUM()).replaceIllegalFileChars().replace('/', '-') // Album, Monstercat Collection
 	type == "Podcast" -> DOWNLOADDIRPODCAST()
 	type == "Mixes" -> DOWNLOADDIRMIXES()
 	else -> DOWNLOADDIRSINGLE()
@@ -109,7 +109,7 @@ class ReleaseDownload(private val release: Release, private var tracks: Collecti
 		
 		logger.debug("Downloading $release to $downloadFolder")
 		tr@ for(track in tracks) {
-			val filename = track.toFileName(release.isMulti()).addFormatSuffix()
+			val filename = track.toFileName(release.isMulti()).addFormatSuffix().replaceIllegalFileChars().replace('/', '-')
 			var trackPath = downloadFolder.resolve(filename)
 			if(track.isAlbumMix)
 				when(ALBUMMIXES()) {
@@ -124,7 +124,7 @@ class ReleaseDownload(private val release: Release, private var tracks: Collecti
 			totalProgress++
 		}
 		if(!isCancelled && downloadCover) {
-			val coverName = release.toString(COVERPATTERN()).replaceIllegalFileChars() + "." + release.coverUrl.substringAfterLast('.')
+			val coverName = release.toString(COVERPATTERN()).replaceIllegalFileChars().replace('/', '-') + "." + release.coverUrl.substringAfterLast('.')
 			updateMessage(coverName)
 			val entity = Covers.fetchCover(release.coverUrl, COVERARTSIZE())
 			val length = entity.contentLength.toDouble()
