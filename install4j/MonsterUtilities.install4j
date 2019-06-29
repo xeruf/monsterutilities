@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="8.0" transformSequenceNumber="8">
-  <directoryPresets config="/home/defvs/IdeaProjects/monsterutilities/MonsterUtilities-dev164-3f89f26.jar" />
-  <application name="MonsterUtilities" applicationId="6836-5354-4913-5566" mediaDir="." shortName="MUtil" publisher="Xerus2000" version="dev164-3f89f26" macVolumeId="92204b6f65bce8d0" javaMinVersion="1.8" javaMaxVersion="1.8">
+  <directoryPresets config="/home/defvs/IdeaProjects/monsterutilities/MonsterUtilities.jar" />
+  <application name="MonsterUtilities" applicationId="6836-5354-4913-5566" mediaDir="." shortName="MUtil" publisher="Xerus2000" version="dev" macVolumeId="92204b6f65bce8d0" javaMinVersion="1.8" javaMaxVersion="1.8">
     <jreBundles jdkProviderId="JBR" />
   </application>
+  <files>
+    <mountPoints>
+      <mountPoint id="159" />
+    </mountPoints>
+    <entries>
+      <fileEntry mountPoint="159" file="../MonsterUtilities-${compiler:sys.version}.jar" />
+    </entries>
+  </files>
   <launchers>
     <launcher name="MonsterUtilities" id="58">
       <executable name="MonsterUtilities" iconSet="true" failOnStderrOutput="false" executableMode="gui">
@@ -433,14 +441,17 @@ return console.askYesNo(message, true);
     </styles>
   </installerGui>
   <mediaSets>
-    <windows name="Windows NO JRE" id="60" installDir="${compiler:sys.fullName}" jreBitType="32">
+    <windows name="Windows NO JRE" id="60" mediaFileName="${compiler:sys.fullName}_${compiler:sys.platform}_${compiler:sys.version}" installDir="${compiler:sys.fullName}" jreBitType="32">
       <jreBundle includedJre="linux-amd64-1.8.0_212.tar.gz" manualJreEntry="true" />
     </windows>
-    <unixInstaller name="Unix BUNDLED JRE" id="62" installDir="${compiler:sys.fullName}">
+    <unixInstaller name="Unix BUNDLED JRE" id="62" mediaFileName="${compiler:sys.fullName}_${compiler:sys.platform}_bundledJRE_${compiler:sys.version}" installDir="${compiler:sys.fullName}">
       <jreBundle jreBundleSource="preCreated" includedJre="linux-amd64-1.8.0_212" />
     </unixInstaller>
-    <unixInstaller name="Unix NO JRE" id="164" installDir="${compiler:sys.fullName}">
+    <unixInstaller name="Unix NO JRE" id="164" mediaFileName="${compiler:sys.fullName}_${compiler:sys.platform}_noJRE_${compiler:sys.version}" installDir="${compiler:sys.fullName}">
       <jreBundle includedJre="linux-amd64-1.8.0_212" />
     </unixInstaller>
   </mediaSets>
+  <buildIds buildAll="false">
+    <mediaSet refId="62" />
+  </buildIds>
 </install4j>

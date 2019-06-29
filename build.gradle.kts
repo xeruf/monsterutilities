@@ -23,6 +23,11 @@ plugins {
 	id("com.github.johnrengelman.shadow") version "5.0.0"
 	id("com.github.breadmoirai.github-release") version "2.2.9"
 	id("com.github.ben-manes.versions") version "0.21.0"
+	id("com.install4j.gradle") version "8.0"
+}
+
+install4j {
+	installDir = file("/opt/install4j8/")
 }
 
 // source directories
@@ -129,6 +134,17 @@ tasks {
 	val release by creating {
 		dependsOn(websiteRelease, githubRelease)
 		group = MAIN
+	}
+	
+	val buildInstaller by creating(com.install4j.gradle.Install4jTask::class) {
+		dependsOn(shadowJar)
+		group = MAIN
+		
+		projectFile = file("install4j/MonsterUtilities.install4j")
+		this.release = version.toString()
+		destination = "install4j/"
+		
+		println("Installers saved in install4j directory")
 	}
 	
 	withType<KotlinCompile> {
