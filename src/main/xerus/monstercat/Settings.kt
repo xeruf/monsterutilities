@@ -47,7 +47,7 @@ object Settings : SettingsNode("xerus/monsterutilities") {
 			override fun toString() = "Dial-up (100 kb/s)"
 		},
 		ADSL(30) {
-			override fun toString() = "ADSL / 3G (1 Mb/s)"
+			override fun toString() = "ADSL / 3G (10 Mb/s)"
 		},
 		CABLE(150) {
 			override fun toString() = "Cable / 4G (100 Mb/s)"
