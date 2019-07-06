@@ -20,6 +20,7 @@ import xerus.ktutil.collections.isEmpty
 import xerus.ktutil.helpers.HTTPQuery
 import xerus.ktutil.javafx.properties.SimpleObservable
 import xerus.ktutil.javafx.properties.listen
+import xerus.monstercat.Settings
 import xerus.monstercat.Sheets
 import xerus.monstercat.api.response.ReleaseResponse
 import xerus.monstercat.api.response.Session
@@ -106,7 +107,7 @@ class APIConnection(vararg path: String) : HTTPQuery<APIConnection>() {
 	override fun toString(): String = "APIConnection(uri=$uri)"
 	
 	companion object {
-		val maxConnections = Runtime.getRuntime().availableProcessors().coerceAtLeast(2) * 50
+		val maxConnections = Settings.CONNECTIONSPEED
 		private var httpClient = createHttpClient(CONNECTSID())
 		
 		val connectValidity = SimpleObservable(ConnectValidity.NOCONNECTION, true)
@@ -150,8 +151,12 @@ class APIConnection(vararg path: String) : HTTPQuery<APIConnection>() {
 		
 		private fun createConnectionManager(): PoolingHttpClientConnectionManager {
 			connectionManager = PoolingHttpClientConnectionManager().apply {
-				defaultMaxPerRoute = (maxConnections * 0.9).toInt()
-				maxTotal = maxConnections
+				defaultMaxPerRoute = (maxConnections.get() * 0.9).toInt()
+				maxTotal = maxConnections.get()
+				maxConnections.addListener { _, _, newValue ->
+					defaultMaxPerRoute = newValue
+					maxTotal = newValue
+				}
 			}
 			// trace ConnectionManager stats
 			if(logger.isTraceEnabled)
