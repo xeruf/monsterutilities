@@ -74,6 +74,8 @@ object Settings : SettingsNode("xerus/monsterutilities") {
 			}
 		}
 	}
+	val CONNECTIONSPEED = create("connectionSpeed", ConnectionSpeed.ADSL.maxConnections)
+	
 	init {
 		ENABLECACHE.listen { selected ->
 			logger.debug("Cache " + (if (selected) "en" else "dis") + "abled")
