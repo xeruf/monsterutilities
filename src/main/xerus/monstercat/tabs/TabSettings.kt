@@ -25,10 +25,7 @@ import org.controlsfx.validation.ValidationSupport
 import org.controlsfx.validation.Validator
 import xerus.ktutil.byteCountString
 import xerus.ktutil.javafx.*
-import xerus.ktutil.javafx.properties.ImmutableObservable
-import xerus.ktutil.javafx.properties.ImmutableObservableList
-import xerus.ktutil.javafx.properties.dependOn
-import xerus.ktutil.javafx.properties.listen
+import xerus.ktutil.javafx.properties.*
 import xerus.ktutil.javafx.ui.App
 import xerus.ktutil.javafx.ui.createAlert
 import xerus.monstercat.Settings
@@ -79,6 +76,20 @@ class TabSettings: VTab() {
 			@Suppress("UNCHECKED_CAST")
 			Settings.PLAYERSEEKBARHEIGHT.bind(valueProperty() as ObservableValue<out Double>)
 		})
+		
+		val connectionSpeed = ComboBox<String>(FXCollections.observableArrayList())
+		onFx {
+			Settings.ConnectionSpeed.values().reversedArray().forEach {
+				connectionSpeed.items.add(it.toString())
+			}
+			connectionSpeed.valueProperty().bindBidirectional(Settings.CONNECTIONSPEED, {
+				Settings.ConnectionSpeed.findFromString(it).maxConnections
+			}, {
+				Settings.ConnectionSpeed.findFromValue(it).toString()
+			})
+			connectionSpeed.select(Settings.ConnectionSpeed.findFromValue(Settings.CONNECTIONSPEED.get()).toString())
+		}
+		addLabeled("Internet Bandwidth", connectionSpeed)
 		
 		addRow(CheckBox("Enable Cache").bind(Settings.ENABLECACHE))
 		if(Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN))
