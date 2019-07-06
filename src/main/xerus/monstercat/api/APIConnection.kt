@@ -153,7 +153,9 @@ class APIConnection(vararg path: String) : HTTPQuery<APIConnection>() {
 			connectionManager = PoolingHttpClientConnectionManager().apply {
 				defaultMaxPerRoute = (maxConnections.get() * 0.9).toInt()
 				maxTotal = maxConnections.get()
+				logger.debug("Initial maxConnections set is ${maxConnections.get()}")
 				maxConnections.addListener { _, _, newValue ->
+					logger.debug("Changed maxConnections to ${maxConnections.get()}")
 					defaultMaxPerRoute = newValue
 					maxTotal = newValue
 				}

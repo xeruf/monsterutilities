@@ -62,6 +62,7 @@ object Settings : SettingsNode("xerus/monsterutilities") {
 					if (it.maxConnections == maxConnections)
 						return it
 				}
+				logger.warn("ConnectionSpeed Enum couldn't be found from value $maxConnections")
 				return ADSL // Default value
 			}
 			
@@ -70,6 +71,7 @@ object Settings : SettingsNode("xerus/monsterutilities") {
 					if (it.toString() == string)
 						return it
 				}
+				logger.warn("ConnectionSpeed Enum couldn't be found from value $string")
 				return ADSL // Default value
 			}
 		}
