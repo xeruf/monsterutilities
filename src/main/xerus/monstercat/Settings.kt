@@ -42,6 +42,38 @@ object Settings : SettingsNode("xerus/monsterutilities") {
 	
 	val FILENAMEPATTERN = create("updatePattern", "MonsterUtilities-%version%.jar")
 	
+	enum class ConnectionSpeed(val maxConnections: Int) {
+		DIALUP(5) {
+			override fun toString() = "Dial-up (100 kb/s)"
+		},
+		ADSL(30) {
+			override fun toString() = "ADSL / 3G (1 Mb/s)"
+		},
+		CABLE(150) {
+			override fun toString() = "Cable / 4G (100 Mb/s)"
+		},
+		FIBER(300) {
+			override fun toString() = "Fiber (300+ Mb/s)"
+		};
+		
+		companion object {
+			fun findFromValue(maxConnections: Int): ConnectionSpeed {
+				ConnectionSpeed.values().forEach {
+					if (it.maxConnections == maxConnections)
+						return it
+				}
+				return ADSL // Default value
+			}
+			
+			fun findFromString(string: String): ConnectionSpeed {
+				ConnectionSpeed.values().forEach {
+					if (it.toString() == string)
+						return it
+				}
+				return ADSL // Default value
+			}
+		}
+	}
 	init {
 		ENABLECACHE.listen { selected ->
 			logger.debug("Cache " + (if (selected) "en" else "dis") + "abled")
