@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="8.0" transformSequenceNumber="8">
-  <directoryPresets config="/home/defvs/IdeaProjects/monsterutilities/assets" />
+  <directoryPresets config="../MonsterUtilities-${compiler:sys.version}.jar" />
   <application name="MonsterUtilities" applicationId="6836-5354-4913-5566" mediaDir="." shortName="MUtil" publisher="Xerus2000" version="dev" macVolumeId="92204b6f65bce8d0" javaMinVersion="1.8" javaMaxVersion="1.8">
     <jreBundles jdkProviderId="JBR" />
   </application>
@@ -9,7 +9,7 @@
       <mountPoint id="159" />
     </mountPoints>
     <entries>
-      <fileEntry mountPoint="159" file="../MonsterUtilities-${compiler:sys.version}.jar" />
+      <fileEntry mountPoint="159" file="MonsterUtilities-${compiler:sys.version}.jar" />
     </entries>
   </files>
   <launchers>

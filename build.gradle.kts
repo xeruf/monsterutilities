@@ -140,6 +140,26 @@ tasks {
 		dependsOn(shadowJar)
 		group = MAIN
 		
+		var path : File? = null
+		doFirst {
+			path = file(jarFile).copyTo(file("install4j/$jarFile"), true)
+			println(
+					if (path?.exists() == true)
+						"Created temporary install4j file 'install4j/${path?.name}'"
+					else
+						"Couldn't create temporary install4j file 'install4j/${path?.name}'"
+			)
+		}
+		
+		doLast {
+			println(
+					if (path?.delete() == true)
+						"Deleted temporary install4j file 'install4j/${path?.name}'"
+					else
+						"Cannot delete temporary install4j file 'install4j/${path?.name}'"
+			)
+		}
+		
 		projectFile = file("install4j/MonsterUtilities.install4j")
 		this.release = version.toString()
 		destination = "install4j/"
