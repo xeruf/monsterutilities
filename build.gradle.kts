@@ -142,6 +142,7 @@ tasks {
 		
 		var path : File? = null
 		doFirst {
+			println("[INSTALL4J] Installers will be saved in ./install4j directory")
 			path = file(jarFile).copyTo(file("install4j/$jarFile"), true)
 			println(
 					if (path?.exists() == true)
@@ -163,8 +164,6 @@ tasks {
 		projectFile = file("install4j/MonsterUtilities.install4j")
 		this.release = version.toString()
 		destination = "install4j/"
-		
-		println("Installers saved in install4j directory")
 	}
 	
 	withType<KotlinCompile> {
