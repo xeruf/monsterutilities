@@ -362,14 +362,18 @@ class TabDownloader: VTab() {
 	}
 	
 	private fun refreshDownloadButton(button: Button) {
-		updateDownloadButtonAction(button, false)
+		updateDownloadButtonAction(button, false, true)
 		button.isDisable = true
 		
 		var hasGold = false
 		var valid = false
+		var login = false
 		val text = when(APIConnection.connectValidity.value) {
 			ConnectValidity.NOCONNECTION -> "No connection"
-			ConnectValidity.NOUSER -> "Invalid connect.sid"
+			ConnectValidity.NOUSER -> {
+				login = true
+				"Login to Monstercat..."
+			}
 			ConnectValidity.NOGOLD -> "No Gold subscription"
 			ConnectValidity.GOLD -> {
 				hasGold = true
@@ -388,9 +392,9 @@ class TabDownloader: VTab() {
 		
 		logger.trace("Setting download button text to $text")
 		button.text = text
-		button.isDisable = hasGold && !valid
+		button.isDisable = (hasGold && !valid) || !login
 		button.tooltip = Tooltip(if(hasGold) "Click to start downloading the selected Tracks" else "Click to re-check you connect.sid")
-		updateDownloadButtonAction(button, valid)
+		updateDownloadButtonAction(button, valid, login)
 	}
 
 	private fun openLoginDialog(){
@@ -421,8 +425,9 @@ class TabDownloader: VTab() {
 		stage.show()
 	}
 	
-	private fun updateDownloadButtonAction(button: Button, valid: Boolean) {
+	private fun updateDownloadButtonAction(button: Button, valid: Boolean, noConnection: Boolean) {
 		if(valid) button.setOnAction { Downloader() }
+		else if(noConnection) button.setOnAction { openLoginDialog() }
 		else button.setOnAction {
 			button.isDisable = true
 			button.text = "Verifying connect.sid..."
