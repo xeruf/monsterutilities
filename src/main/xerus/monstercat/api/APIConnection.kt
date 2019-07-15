@@ -229,6 +229,27 @@ class APIConnection(vararg path: String) : HTTPQuery<APIConnection>() {
 			return ConnectResult(connectsid, validity, session)
 		}
 		
+		fun login(username: String, password: String): Boolean {
+			val connection = APIConnection("v2", "signin")
+			connection.postLogin(username, password)
+
+			val code = connection.response?.statusLine?.statusCode ?: 0
+			logger.debug("code returned is $code")
+			if (code !in 200..206)
+				return false
+			val connectsid = cookieStore.cookies.find { it.name == "connect.sid" }?.value ?: return false
+			logger.debug("connectsid is $connectsid")
+			CONNECTSID.value = connectsid
+			return true
+		}
+		
+		fun logout() {
+			val connection = APIConnection("v2", "signout")
+			connection.postLogout()
+			CONNECTSID.clear()
+
+		}
+		
 		data class ConnectResult(val connectsid: String, val validity: ConnectValidity, val session: Session?)
 	}
 	
