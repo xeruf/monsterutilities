@@ -392,6 +392,34 @@ class TabDownloader: VTab() {
 		button.tooltip = Tooltip(if(hasGold) "Click to start downloading the selected Tracks" else "Click to re-check you connect.sid")
 		updateDownloadButtonAction(button, valid)
 	}
+
+	private fun openLoginDialog(){
+		val parent = VBox()
+		val stage = App.stage.createStage("Login to Monstercat.com", parent)
+		val emailField = TextField("").apply {
+			promptText = "Email address"
+		}
+		val passwordField = PasswordField().apply {
+			promptText = "Password"
+		}
+		val controls = HBox().apply {
+			addButton("Login") {
+				val login = APIConnection.login(emailField.text, passwordField.text)
+				logger.debug("Monstercat connection with ${emailField.text} - ${passwordField.text} returned $login")
+				if (login){
+					stage.close()
+				}else{
+					parent.children.add(parent.children.lastIndex - 1, Label("Wrong username/password"))
+					stage.sizeToScene()
+				}
+			}
+			addButton("Cancel") {
+				stage.close()
+			}
+		}
+		parent.children.addAll(emailField, passwordField, controls)
+		stage.show()
+	}
 	
 	private fun updateDownloadButtonAction(button: Button, valid: Boolean) {
 		if(valid) button.setOnAction { Downloader() }
