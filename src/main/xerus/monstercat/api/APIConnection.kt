@@ -39,7 +39,7 @@ private val logger = KotlinLogging.logger { }
 /** eases query creation to the Monstercat API */
 class APIConnection(vararg path: String) : HTTPQuery<APIConnection>() {
 	
-	private val path: String = "/api/" + path.joinToString("/")
+	private val path: String = "/" + path.joinToString("/")
 	val uri: URI
 		get() = URI("https", "connect.monstercat.com", path, getQuery(), null)
 	
@@ -201,7 +201,7 @@ class APIConnection(vararg path: String) : HTTPQuery<APIConnection>() {
 		}
 		
 		private fun getConnectValidity(connectsid: String): ConnectResult {
-			val session = APIConnection("self", "session").parseJSON(Session::class.java)
+			val session = APIConnection("api", "self", "session").parseJSON(Session::class.java)
 			val validity = when {
 				session == null -> ConnectValidity.NOCONNECTION
 				session.user == null -> ConnectValidity.NOUSER
