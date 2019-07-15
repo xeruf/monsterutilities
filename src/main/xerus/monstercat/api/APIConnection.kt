@@ -74,6 +74,19 @@ class APIConnection(vararg path: String) : HTTPQuery<APIConnection>() {
 	fun getTracks() =
 		parseJSON(TrackResponse::class.java)?.results
 	
+	fun postLogin(username: String, password: String) =
+		post(HttpPost(uri).apply {
+			setHeader("Accept", "application/json")
+			setHeader("Content-type", "application/json")
+			entity = StringEntity("{\"email\":\"$username\",\"password\":\"$password\"}")
+		})
+	
+	fun postLogout() =
+		post(HttpPost(uri).apply {
+			setHeader("Accept", "application/json")
+			setHeader("Content-type", "application/json")
+		})
+	
 	/** Aborts this connection and thus terminates the InputStream if active */
 	fun abort() {
 		httpGet?.abort()
