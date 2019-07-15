@@ -347,7 +347,7 @@ class TabDownloader: VTab() {
 				show()
 			}
 		}, Button("Checking connection...").apply {
-			prefWidth = 200.0
+			prefWidth = Control.USE_COMPUTED_SIZE
 			CONNECTSID.listen {
 				isDisable = true
 				text = "Verifying connect.sid..."
@@ -372,7 +372,10 @@ class TabDownloader: VTab() {
 			ConnectValidity.NOCONNECTION -> "No connection"
 			ConnectValidity.NOUSER -> {
 				login = true
-				"Login to Monstercat..."
+				if (CONNECTSID.value.isEmpty())
+					"Click to login to Monstercat..."
+				else
+					"Invalid connect.sid! Click to login to Monstercat..."
 			}
 			ConnectValidity.NOGOLD -> "No Gold subscription"
 			ConnectValidity.GOLD -> {
