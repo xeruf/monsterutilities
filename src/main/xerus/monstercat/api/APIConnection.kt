@@ -126,6 +126,8 @@ class APIConnection(vararg path: String) : HTTPQuery<APIConnection>() {
 		val connectValidity = SimpleObservable(ConnectValidity.NOCONNECTION, true)
 		
 		private lateinit var connectionManager: PoolingHttpClientConnectionManager
+
+		private lateinit var cookieStore: BasicCookieStore
 		
 		init {
 			checkConnectsid(CONNECTSID())
@@ -157,7 +159,7 @@ class APIConnection(vararg path: String) : HTTPQuery<APIConnection>() {
 					domain = "connect.monstercat.com"
 					path = "/"
 					BasicCookieStore().also { it.addCookie(this) }
-				})
+				}.apply { cookieStore = this })
 				.setConnectionManager(createConnectionManager())
 				.build()
 		}
