@@ -425,6 +425,11 @@ class TabDownloader: VTab() {
 			}
 		}
 		parent.children.addAll(emailField, passwordField, controls)
+		stage.isAlwaysOnTop = true
+		stage.focusedProperty().addListener { _, onHidden, _ ->
+			if (onHidden)
+				stage.close()
+		}
 		stage.show()
 	}
 	
