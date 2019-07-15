@@ -429,13 +429,15 @@ class TabDownloader: VTab() {
 	}
 	
 	private fun updateDownloadButtonAction(button: Button, valid: Boolean, noConnection: Boolean) {
-		if(valid) button.setOnAction { Downloader() }
-		else if(noConnection) button.setOnAction { openLoginDialog() }
-		else button.setOnAction {
-			button.isDisable = true
-			button.text = "Verifying connect.sid..."
-			logger.trace("Verifying connect.sid...")
-			APIConnection.checkConnectsid(CONNECTSID())
+		when {
+			valid -> button.setOnAction { Downloader() }
+			noConnection -> button.setOnAction { openLoginDialog() }
+			else -> button.setOnAction {
+				button.isDisable = true
+				button.text = "Verifying connect.sid..."
+				logger.trace("Verifying connect.sid...")
+				APIConnection.checkConnectsid(CONNECTSID())
+			}
 		}
 	}
 	
