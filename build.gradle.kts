@@ -4,6 +4,7 @@ import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.IOException
 import java.util.*
+import com.install4j.gradle.Install4jTask
 
 val isUnstable = properties["release"] == null
 var commitNumber: String = ""
@@ -136,7 +137,7 @@ tasks {
 		group = MAIN
 	}
 	
-	val buildInstaller by creating(com.install4j.gradle.Install4jTask::class) {
+	val buildInstaller by creating(Install4jTask::class) {
 		dependsOn(shadowJar)
 		group = MAIN
 		
