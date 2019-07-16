@@ -23,7 +23,7 @@
         </classPath>
       </java>
       <iconImageFiles>
-        <file path="/home/defvs/IdeaProjects/monsterutilities/assets/favicon.png" />
+        <file path="../assets/favicon.png" />
       </iconImageFiles>
     </launcher>
   </launchers>
@@ -34,7 +34,7 @@
           <property name="customIconImageFiles">
             <add>
               <object class="com.install4j.api.beans.ExternalFile">
-                <string>/home/defvs/IdeaProjects/monsterutilities/assets/favicon.png</string>
+                <string>../assets/favicon.png</string>
               </object>
             </add>
           </property>
@@ -452,7 +452,6 @@ return console.askYesNo(message, true);
   </installerGui>
   <mediaSets>
     <windows name="Windows x32 NO JRE" id="60" mediaFileName="${compiler:sys.fullName}_${compiler:sys.platform}_${compiler:sys.version}" installDir="${compiler:sys.fullName}" jreBitType="32">
-      <jreBundle includedJre="linux-amd64-1.8.0_212.tar.gz" manualJreEntry="true" />
     </windows>
     <unixInstaller name="Unix BUNDLED JRE" id="62" mediaFileName="${compiler:sys.fullName}_${compiler:sys.platform}_bundledJRE_${compiler:sys.version}" installDir="${compiler:sys.fullName}">
       <jreBundle jreBundleSource="preCreated" includedJre="linux-amd64-1.8.0_212" />
