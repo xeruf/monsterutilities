@@ -32,6 +32,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.lang.ref.WeakReference
 import java.net.URI
+import kotlin.math.min
 import kotlin.reflect.KClass
 
 
@@ -107,7 +108,7 @@ class APIConnection(vararg path: String) : HTTPQuery<APIConnection>() {
 	override fun toString(): String = "APIConnection(uri=$uri)"
 	
 	companion object {
-		val maxConnections = Settings.CONNECTIONSPEED
+		var maxConnections = min(Settings.CONNECTIONSPEED.get(), Runtime.getRuntime().availableProcessors().coerceAtLeast(2) * 50)
 		private var httpClient = createHttpClient(CONNECTSID())
 		
 		val connectValidity = SimpleObservable(ConnectValidity.NOCONNECTION, true)
@@ -151,13 +152,14 @@ class APIConnection(vararg path: String) : HTTPQuery<APIConnection>() {
 		
 		private fun createConnectionManager(): PoolingHttpClientConnectionManager {
 			connectionManager = PoolingHttpClientConnectionManager().apply {
-				defaultMaxPerRoute = (maxConnections.get() * 0.9).toInt()
-				maxTotal = maxConnections.get()
-				logger.debug("Initial maxConnections set is ${maxConnections.get()}")
-				maxConnections.listen { newValue ->
-					logger.debug("Changed maxConnections to ${maxConnections.get()}")
-					defaultMaxPerRoute = newValue
-					maxTotal = newValue
+				defaultMaxPerRoute = (maxConnections * 0.9).toInt()
+				maxTotal = maxConnections
+				logger.debug("Initial maxConnections set is ${maxConnections}")
+				Settings.CONNECTIONSPEED.listen { newValue ->
+					logger.debug("Changed maxConnections to ${maxConnections}")
+					maxConnections = min(Settings.CONNECTIONSPEED.get(), Runtime.getRuntime().availableProcessors().coerceAtLeast(2) * 50)
+					defaultMaxPerRoute = (maxConnections * 0.9).toInt()
+					maxTotal = maxConnections
 				}
 			}
 			// trace ConnectionManager stats
