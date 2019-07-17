@@ -10,6 +10,7 @@ import xerus.ktutil.javafx.Themes
 import xerus.ktutil.javafx.properties.listen
 import xerus.ktutil.preferences.SettingsNode
 import xerus.monstercat.tabs.FetchTab
+import xerus.monstercat.tabs.TabSettings
 import xerus.monstercat.tabs.availableColumns
 import xerus.monstercat.tabs.defaultColumns
 import java.io.File
@@ -21,6 +22,10 @@ object Settings : SettingsNode("xerus/monsterutilities") {
 	val PLAYERSCROLLSENSITIVITY = create("playerSeekbarScrollSensitivity", 6.0)
 	val PLAYERSEEKBARHEIGHT = create("playerSeekbarHeight", 8.0)
 	val ENABLEEQUALIZER = create("equalizerEnabled", false)
+	
+	val PLAYERARTPRIORITY = create("coverartPriorityList", TabSettings.PriorityList.SGL_ALB_COL.priorities) {
+		it.removeSurrounding("[","]").split(", ")
+	}
 	
 	val ENABLECACHE = create("cacheEnabled", true)
 	
