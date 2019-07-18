@@ -10,6 +10,7 @@ import org.apache.http.HttpResponse
 import org.apache.http.client.config.CookieSpecs
 import org.apache.http.client.config.RequestConfig
 import org.apache.http.client.methods.*
+import org.apache.http.client.protocol.HttpClientContext
 import org.apache.http.entity.StringEntity
 import org.apache.http.impl.client.BasicCookieStore
 import org.apache.http.impl.client.CloseableHttpClient
@@ -84,21 +85,21 @@ class APIConnection(vararg path: String) : HTTPQuery<APIConnection>() {
 	// Direct Requesting
 	
 	private var httpGet: HttpGet? = null
-	fun get() {
+	fun get(context: HttpClientContext? = null) {
 		httpGet = HttpGet(uri)
-		response = execute(httpGet!!)
+		response = execute(httpGet!!, context)
 	}
 	
 	private var httpPost: HttpPost? = null
-	fun post(request : HttpPost) {
+	fun post(request : HttpPost, context: HttpClientContext? = null) {
 		httpPost = request
-		response = execute(request)
+		response = execute(request, context)
 	}
 	
 	private var httpPut: HttpPut? = null
-	fun put(request: HttpPut) {
+	fun put(request: HttpPut, context: HttpClientContext? = null) {
 		httpPut = request
-		response = execute(httpPut!!)
+		response = execute(httpPut!!, context)
 	}
 	
 	private var response: HttpResponse? = null
@@ -126,17 +127,15 @@ class APIConnection(vararg path: String) : HTTPQuery<APIConnection>() {
 		val connectValidity = SimpleObservable(ConnectValidity.NOCONNECTION, true)
 		
 		private lateinit var connectionManager: PoolingHttpClientConnectionManager
-
-		private lateinit var cookieStore: BasicCookieStore
 		
 		init {
 			checkConnectsid(CONNECTSID())
 			CONNECTSID.listen { updateConnectsid(it) }
 		}
 		
-		fun execute(request: HttpUriRequest): CloseableHttpResponse {
+		fun execute(request: HttpUriRequest, context: HttpClientContext? = null): CloseableHttpResponse {
 			logger.trace { "Connecting to ${request.uri}" }
-			return httpClient.execute(request)
+			return httpClient.execute(request, context)
 		}
 		
 		private fun updateConnectsid(connectsid: String) {
@@ -159,7 +158,7 @@ class APIConnection(vararg path: String) : HTTPQuery<APIConnection>() {
 					domain = "connect.monstercat.com"
 					path = "/"
 					BasicCookieStore().also { it.addCookie(this) }
-				}.apply { cookieStore = this })
+				})
 				.setConnectionManager(createConnectionManager())
 				.build()
 		}
@@ -218,17 +217,18 @@ class APIConnection(vararg path: String) : HTTPQuery<APIConnection>() {
 		
 		fun login(username: String, password: String): Boolean {
 			val connection = APIConnection("v2", "signin")
+			val context = HttpClientContext()
 			connection.post(HttpPost(connection.uri).apply {
 				setHeader("Accept", "application/json")
 				setHeader("Content-type", "application/json")
 				entity = StringEntity("""{"email":"$username","password":"$password"}""")
-			})
+			}, context)
 
 			val code = connection.response?.statusLine?.statusCode ?: 0
 			logger.debug("code returned is $code")
 			if (code !in 200..206)
 				return false
-			val connectsid = cookieStore.cookies.find { it.name == "connect.sid" }?.value ?: return false
+			val connectsid = context.cookieStore.cookies.find { it.name == "connect.sid" }?.value ?: return false
 			logger.debug("connectsid is $connectsid")
 			CONNECTSID.value = connectsid
 			return true
