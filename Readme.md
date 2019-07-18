@@ -99,6 +99,7 @@ To fetch the Catalog and Genres, you need to create the file `src/resources/shee
  `run`       | runs the project right from source
  `shadowJar` | Creates an executable jar in the root directory of the project bundled with all libraries
  `runShadow` | Creates a shadowJar and runs it
+ `dplink`    | Creates a self-contained application in `build/app`
  `build` | Builds & tests the whole project
 
 Both run tasks can be run with the argument `-Dargs="--loglevel trace"`to change the log level or pass other arguments to the application.
