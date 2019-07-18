@@ -220,13 +220,10 @@ class APIConnection(vararg path: String) : HTTPQuery<APIConnection>() {
 				entity = StringEntity("""{"email":"$username","password":"$password"}""")
 			}, context)
 
-			val code = connection.response?.statusLine?.statusCode ?: 0
-			logger.debug("code returned is $code")
-			if (code !in 200..206)
-				return false
-			val connectsid = context.cookieStore.cookies.find { it.name == "connect.sid" }?.value ?: return false
-			logger.debug("connectsid is $connectsid")
-			CONNECTSID.value = connectsid
+			val code = connection.response?.statusLine?.statusCode
+			logger.trace("Login API (POST) returned response code $code")
+			if (code !in 200..206) return false
+			CONNECTSID.value = (context.cookieStore.cookies.find { it.name == "connect.sid" }?.value ?: return false)
 			return true
 		}
 		
