@@ -105,7 +105,7 @@ class APIConnection(vararg path: String) : HTTPQuery<APIConnection>() {
 	private var httpPost: HttpPost? = null
 	fun post(request : HttpPost) {
 		httpPost = request
-		response = execute(httpPost!!)
+		response = execute(request)
 	}
 	
 	private var httpPut: HttpPut? = null
