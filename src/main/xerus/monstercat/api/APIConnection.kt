@@ -83,25 +83,15 @@ class APIConnection(vararg path: String) : HTTPQuery<APIConnection>() {
 	
 	// Direct Requesting
 
-	fun get(context: HttpClientContext? = null) {
-		httpRequest = HttpGet(uri)
-		response = execute(httpRequest!!, context)
-	}
-
-	fun post(request : HttpPost, context: HttpClientContext? = null) {
+	fun execute(request: HttpUriRequest, context: HttpClientContext? = null) {
 		httpRequest = request
-		response = execute(request, context)
-	}
-
-	fun put(request: HttpPut, context: HttpClientContext? = null) {
-		httpRequest = request
-		response = execute(request, context)
+		response = executeRequest(request, context)
 	}
 	
 	private var response: HttpResponse? = null
 	fun getResponse(): HttpResponse {
 		if(response == null)
-			get()
+			execute(HttpGet(uri))
 		return response!!
 	}
 	
@@ -129,7 +119,7 @@ class APIConnection(vararg path: String) : HTTPQuery<APIConnection>() {
 			CONNECTSID.listen { updateConnectsid(it) }
 		}
 		
-		fun execute(request: HttpUriRequest, context: HttpClientContext? = null): CloseableHttpResponse {
+		fun executeRequest(request: HttpUriRequest, context: HttpClientContext? = null): CloseableHttpResponse {
 			logger.trace { "Connecting to ${request.uri}" }
 			return httpClient.execute(request, context)
 		}
@@ -214,7 +204,7 @@ class APIConnection(vararg path: String) : HTTPQuery<APIConnection>() {
 		fun login(username: String, password: String): Boolean {
 			val connection = APIConnection("v2", "signin")
 			val context = HttpClientContext()
-			connection.post(HttpPost(connection.uri).apply {
+			connection.execute(HttpPost(connection.uri).apply {
 				setHeader("Accept", "application/json")
 				setHeader("Content-type", "application/json")
 				entity = StringEntity("""{"email":"$username","password":"$password"}""")
