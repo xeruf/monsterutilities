@@ -28,7 +28,11 @@ plugins {
 }
 
 install4j {
-	installDir = file("/opt/install4j8/")
+	var install4jDir : String? = null
+	if (hasProperty("install4jDir"))
+		install4jDir = property("install4jDir") as String?
+	if (!install4jDir.isNullOrEmpty())
+		installDir = file(install4jDir)
 }
 
 // source directories
