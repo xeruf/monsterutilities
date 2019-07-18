@@ -42,19 +42,13 @@ object Settings : SettingsNode("xerus/monsterutilities") {
 	
 	val FILENAMEPATTERN = create("updatePattern", "MonsterUtilities-%version%.jar")
 	
-	enum class ConnectionSpeed(val maxConnections: Int) {
-		DIALUP(5) {
-			override fun toString() = "Dial-up (100 kb/s)"
-		},
-		ADSL(30) {
-			override fun toString() = "ADSL / 3G (10 Mb/s)"
-		},
-		CABLE(150) {
-			override fun toString() = "Cable / 4G (100 Mb/s)"
-		},
-		FIBER(300) {
-			override fun toString() = "Fiber (300+ Mb/s)"
-		};
+	enum class ConnectionSpeed(val maxConnections: Int, val display: String) {
+		DIALUP(5, "Dial-up (100 kb/s)"),
+		ADSL(30, "ADSL / 3G (10 Mb/s)"),
+		CABLE(150, "Cable / 4G (100 Mb/s)"),
+		FIBER(300, "Fiber (300+ Mb/s)");
+
+		override fun toString(): String = display
 		
 		companion object {
 			fun findFromValue(maxConnections: Int): ConnectionSpeed {
