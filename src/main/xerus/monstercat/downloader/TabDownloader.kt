@@ -8,6 +8,7 @@ import javafx.scene.control.*
 import javafx.scene.image.ImageView
 import javafx.scene.layout.*
 import javafx.scene.text.Text
+import javafx.stage.Modality
 import javafx.stage.Stage
 import javafx.stage.StageStyle
 import javafx.util.StringConverter
@@ -347,7 +348,7 @@ class TabDownloader: VTab() {
 				show()
 			}
 		}, Button("Checking connection...").apply {
-			prefWidth = Control.USE_COMPUTED_SIZE
+			prefWidth = 400.0
 			CONNECTSID.listen {
 				isDisable = true
 				text = "Verifying connect.sid..."
@@ -396,7 +397,7 @@ class TabDownloader: VTab() {
 		logger.trace("Setting download button text to $text")
 		button.text = text
 		button.isDisable = (hasGold && !valid) || !login
-		button.tooltip = Tooltip(if(hasGold) "Click to start downloading the selected Tracks" else "Click to re-check you connect.sid")
+		button.tooltip = Tooltip(if(hasGold) "Click to start downloading the selected Tracks" else "Click to connect using your Monstercat.com credentials")
 		updateDownloadButtonAction(button, valid, login)
 	}
 
@@ -423,11 +424,7 @@ class TabDownloader: VTab() {
 				}
 		)
 		stage.apply {
-			isAlwaysOnTop = true
-			stage.focusedProperty().addListener { _, onHidden, _ ->
-				if (onHidden)
-					stage.close()
-			}
+			initModality(Modality.WINDOW_MODAL)
 			show()
 		}
 	}
