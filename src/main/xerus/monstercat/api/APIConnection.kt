@@ -74,19 +74,6 @@ class APIConnection(vararg path: String) : HTTPQuery<APIConnection>() {
 	fun getTracks() =
 		parseJSON(TrackResponse::class.java)?.results
 	
-	fun postLogin(username: String, password: String) =
-		post(HttpPost(uri).apply {
-			setHeader("Accept", "application/json")
-			setHeader("Content-type", "application/json")
-			entity = StringEntity("""{"email":"$username","password":"$password"}""")
-		})
-	
-	fun postLogout() =
-		post(HttpPost(uri).apply {
-			setHeader("Accept", "application/json")
-			setHeader("Content-type", "application/json")
-		})
-	
 	/** Aborts this connection and thus terminates the InputStream if active */
 	fun abort() {
 		httpGet?.abort()
@@ -148,8 +135,8 @@ class APIConnection(vararg path: String) : HTTPQuery<APIConnection>() {
 		}
 		
 		fun execute(request: HttpUriRequest): CloseableHttpResponse {
-			logger.trace { "Connecting to ${httpGet.uri}" }
-			return httpClient.execute(httpGet)
+			logger.trace { "Connecting to ${request.uri}" }
+			return httpClient.execute(request)
 		}
 		
 		private fun updateConnectsid(connectsid: String) {
@@ -231,7 +218,11 @@ class APIConnection(vararg path: String) : HTTPQuery<APIConnection>() {
 		
 		fun login(username: String, password: String): Boolean {
 			val connection = APIConnection("v2", "signin")
-			connection.postLogin(username, password)
+			connection.post(HttpPost(connection.uri).apply {
+				setHeader("Accept", "application/json")
+				setHeader("Content-type", "application/json")
+				entity = StringEntity("""{"email":"$username","password":"$password"}""")
+			})
 
 			val code = connection.response?.statusLine?.statusCode ?: 0
 			logger.debug("code returned is $code")
@@ -244,10 +235,7 @@ class APIConnection(vararg path: String) : HTTPQuery<APIConnection>() {
 		}
 		
 		fun logout() {
-			val connection = APIConnection("v2", "signout")
-			connection.postLogout()
 			CONNECTSID.clear()
-
 		}
 		
 		data class ConnectResult(val connectsid: String, val validity: ConnectValidity, val session: Session?)
