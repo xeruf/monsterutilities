@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="8.0" transformSequenceNumber="8">
   <directoryPresets config="../MonsterUtilities-${compiler:sys.version}.jar" />
-  <application name="MonsterUtilities" applicationId="6836-5354-4913-5566" mediaDir="." pack200Compression="true" shortName="MUtil" publisher="Xerus2000" version="dev" macVolumeId="92204b6f65bce8d0" javaMinVersion="1.8" javaMaxVersion="1.8">
+  <application name="MonsterUtilities" applicationId="6836-5354-4913-5566" mediaDir="." mediaFilePattern="${compiler:sys.fullName}_${compiler:sys.platform}_${compiler:sys.version}" pack200Compression="true" shortName="MUtil" publisher="Xerus2000" version="dev" macVolumeId="92204b6f65bce8d0" javaMinVersion="1.8" javaMaxVersion="1.8">
     <jreBundles jdkProviderId="JBR" />
   </application>
   <files>
@@ -452,9 +452,9 @@ return console.askYesNo(message, true);
     </styles>
   </installerGui>
   <mediaSets>
-    <windows name="Windows x32 NO JRE" id="60" mediaFileName="${compiler:sys.fullName}_${compiler:sys.platform}_${compiler:sys.version}" installDir="${compiler:sys.fullName}" jreBitType="32" />
-    <unixInstaller name="Unix NO JRE" id="164" mediaFileName="${compiler:sys.fullName}_${compiler:sys.platform}_noJRE_${compiler:sys.version}" installDir="${compiler:sys.fullName}" />
-    <windows name="Windows x64 NO JRE" id="257" mediaFileName="${compiler:sys.fullName}_${compiler:sys.platform}_noJRE_${compiler:sys.version}" installDir="${compiler:sys.fullName}" />
+    <windows name="Windows x32 NO JRE" id="60" installDir="${compiler:sys.fullName}" jreBitType="32" />
+    <unixInstaller name="Unix NO JRE" id="164" installDir="${compiler:sys.fullName}" />
+    <windows name="Windows x64 NO JRE" id="257" installDir="${compiler:sys.fullName}" />
     <linuxDeb name="Linux .deb" id="259" installDir="/opt/${compiler:sys.fullName}" description="A multitool for Monstercat.com, but on your desktop. Download, stream, learn about your favorite songs !" />
     <macosArchive name="macOS DMG" id="260" launcherId="58" />
     <windowsArchive name="Windows Portable x32" id="261" installDir="${compiler:sys.fullName}" jreBitType="32" />
