@@ -23,6 +23,7 @@
         </classPath>
       </java>
       <iconImageFiles>
+        <file path="../assets/favicon_macos.png" />
         <file path="../assets/favicon.png" />
       </iconImageFiles>
     </launcher>
@@ -452,7 +453,7 @@ return console.askYesNo(message, true);
   </installerGui>
   <mediaSets>
     <windows name="Windows x32 NO JRE" id="60" mediaFileName="${compiler:sys.fullName}_${compiler:sys.platform}_${compiler:sys.version}" installDir="${compiler:sys.fullName}" jreBitType="32" />
-    <unixInstaller name="Unix NO JRE" id="164" mediaFileName="${compiler:sys.fullName}_${compiler:sys.platform}_noJRE_${compiler:sys.version}" installDir="${compiler:sys.fullName}"/>
+    <unixInstaller name="Unix NO JRE" id="164" mediaFileName="${compiler:sys.fullName}_${compiler:sys.platform}_noJRE_${compiler:sys.version}" installDir="${compiler:sys.fullName}" />
     <windows name="Windows x64 NO JRE" id="257" mediaFileName="${compiler:sys.fullName}_${compiler:sys.platform}_noJRE_${compiler:sys.version}" installDir="${compiler:sys.fullName}" />
     <linuxDeb name="Linux .deb" id="259" installDir="/opt/${compiler:sys.fullName}" description="A multitool for Monstercat.com, but on your desktop. Download, stream, learn about your favorite songs !" />
     <macosArchive name="macOS DMG" id="260" launcherId="58" />
