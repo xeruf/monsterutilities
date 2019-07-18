@@ -147,7 +147,7 @@ class APIConnection(vararg path: String) : HTTPQuery<APIConnection>() {
 			CONNECTSID.listen { updateConnectsid(it) }
 		}
 		
-		fun execute(httpGet: HttpUriRequest): CloseableHttpResponse {
+		fun execute(request: HttpUriRequest): CloseableHttpResponse {
 			logger.trace { "Connecting to ${httpGet.uri}" }
 			return httpClient.execute(httpGet)
 		}
