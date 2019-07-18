@@ -74,32 +74,28 @@ class APIConnection(vararg path: String) : HTTPQuery<APIConnection>() {
 	/** @return null when the connection fails, else the parsed result */
 	fun getTracks() =
 		parseJSON(TrackResponse::class.java)?.results
-	
+
+	private var httpRequest: HttpUriRequest? = null
 	/** Aborts this connection and thus terminates the InputStream if active */
 	fun abort() {
-		httpGet?.abort()
-		httpPost?.abort()
-		httpPut?.abort()
+		httpRequest?.abort()
 	}
 	
 	// Direct Requesting
-	
-	private var httpGet: HttpGet? = null
+
 	fun get(context: HttpClientContext? = null) {
-		httpGet = HttpGet(uri)
-		response = execute(httpGet!!, context)
+		httpRequest = HttpGet(uri)
+		response = execute(httpRequest!!, context)
 	}
-	
-	private var httpPost: HttpPost? = null
+
 	fun post(request : HttpPost, context: HttpClientContext? = null) {
-		httpPost = request
+		httpRequest = request
 		response = execute(request, context)
 	}
-	
-	private var httpPut: HttpPut? = null
+
 	fun put(request: HttpPut, context: HttpClientContext? = null) {
-		httpPut = request
-		response = execute(httpPut!!, context)
+		httpRequest = request
+		response = execute(request, context)
 	}
 	
 	private var response: HttpResponse? = null
