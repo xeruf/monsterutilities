@@ -33,6 +33,7 @@ sourceSets {
 	}
 	test {
 		java.srcDir("src/test")
+		resources.srcDir("src/test")
 	}
 }
 
