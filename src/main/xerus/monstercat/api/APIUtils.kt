@@ -4,6 +4,7 @@ import mu.KotlinLogging
 import xerus.ktutil.helpers.StringMasker
 import xerus.ktutil.nullIfEmpty
 import xerus.ktutil.toInt
+import xerus.monstercat.api.response.Artist
 import xerus.monstercat.api.response.Track
 
 val artistDelimiters = arrayOf(" & ", ", ", " and ", " x ", " feat. ")
@@ -43,5 +44,8 @@ object APIUtils {
 				}
 		}
 	}
+	
+	fun getArtistExceptions(artists: Collection<Artist>): Collection<String> =
+		artists.filter { it.name.contains(" & ") }.map { it.name }
 	
 }

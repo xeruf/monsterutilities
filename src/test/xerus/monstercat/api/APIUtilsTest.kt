@@ -1,22 +1,32 @@
+@file:Suppress("BlockingMethodInNonBlockingContext")
+
 package xerus.monstercat.api
 
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Test
-import xerus.monstercat.api.response.Artist
+import io.kotlintest.matchers.collections.shouldNotContain
+import io.kotlintest.matchers.types.shouldNotBeNull
+import io.kotlintest.shouldBe
+import io.kotlintest.specs.StringSpec
+import xerus.monstercat.Sheets
+import xerus.monstercat.api.response.ArtistRel
+import xerus.monstercat.api.response.FullArtist
+import xerus.monstercat.api.response.ListResponse
 
-internal class APIUtilsTest {
+internal class APIUtilsTest: StringSpec({
 	
-	@Test
-	suspend fun find() {
+	"find Edge of the World by Karma Fields" {
 		val edge = APIUtils.find("Edge Of The World", "Karma Fields")!!
-		check(edge.artists, Artist("Razihel")) { v, e -> v.contains(e) }
-		check(edge.artistsTitle, "Karma Fields")
+		edge.artists shouldNotContain ArtistRel("Razihel")
+		edge.artistsTitle shouldBe "Karma Fields"
 	}
 	
-	fun <T, U> check(value: T, expected: U, test: (T, U) -> Boolean = { v, e -> v == e }) {
-		Assertions.assertTrue(test(value, expected)) {
-			"$value did not match $expected"
-		}
+	"get Artist Exceptions" {
+		val artistsJson = APIUtilsTest::class.java.getResourceAsStream("artists.json")
+		artistsJson.shouldNotBeNull()
+		val artists = Sheets.JSON_FACTORY.fromInputStream(artistsJson, ArtistResponse::class.java)
+		artists.total shouldBe 465
+		APIUtils.getArtistExceptions(artists.results) shouldBe arrayOf("Case & Point", "Gent & Jawns", "A.M.C & Turno", "Gamble & Burke")
 	}
 	
-}
+})
+
+class ArtistResponse: ListResponse<FullArtist>()
