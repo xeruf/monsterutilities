@@ -78,7 +78,7 @@ class APIConnection(vararg path: String) : HTTPQuery<APIConnection>() {
 		post(HttpPost(uri).apply {
 			setHeader("Accept", "application/json")
 			setHeader("Content-type", "application/json")
-			entity = StringEntity("{\"email\":\"$username\",\"password\":\"$password\"}")
+			entity = StringEntity("""{"email":"$username","password":"$password"}""")
 		})
 	
 	fun postLogout() =
