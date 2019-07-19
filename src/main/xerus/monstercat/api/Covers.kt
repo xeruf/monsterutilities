@@ -23,13 +23,17 @@ object Covers {
 	/** Returns an Image of the cover in the requested size using caching.
 	 * @param size the size of the Image - the underlying image data will always be 64x64, thus this is the default. */
 	fun getThumbnailImage(coverUrl: String, size: Number = 64, invalidate: Boolean = false): Image =
-		getThumbnail(coverUrl, invalidate).use { createImage(it, size) }
-	
-	/** Returns an InputStream to the cover in size 64x64, using caching. */
-	private fun getThumbnail(coverUrl: String, invalidate: Boolean = false): InputStream {
-		val file = coverCacheFile(thumbnailCacheDir, coverUrl)
+		getCover(coverUrl, 64,  invalidate).use { createImage(it, size) }
+
+	/** @return an [InputStream] of the downloaded image file
+	 * @param coverUrl the URL for fetching the cover
+	 * @param size the final size of the cover
+	 * @param invalidate set to true to ignore already existing cache files
+	 */
+	fun getCover(coverUrl: String, size: Int = 64, invalidate: Boolean = false) : InputStream {
+		val file = coverCacheFile(if (size > 128) coverCacheDir else thumbnailCacheDir, coverUrl)
 		if(!file.exists() || invalidate) {
-			fetchCover(coverUrl, 64).content.use { input ->
+			fetchCover(coverUrl, size).content.use { input ->
 				file.outputStream().use { out ->
 					input.copyTo(out)
 				}
@@ -41,20 +45,7 @@ object Covers {
 	/** Returns a larger Image of the cover in the requested size using caching.
 	 * @param size the size of the Image - the image file will always be 2048x2048 */
 	fun getCoverImage(coverUrl: String, size: Int = 2048, invalidate: Boolean = false): Image =
-			getCover(coverUrl, invalidate).use { createImage(it, size) }
-	
-	/** Returns an InputStream to the cover in size 2048x2048, using caching. */
-	private fun getCover(coverUrl: String, invalidate: Boolean = false) : InputStream {
-		val file = coverCacheFile(coverCacheDir, coverUrl)
-		if(!file.exists() || invalidate) {
-			fetchCover(coverUrl, 2048).content.use { input ->
-				file.outputStream().use { out ->
-					input.copyTo(out)
-				}
-			}
-		}
-		return file.inputStream()
-	}
+			getCover(coverUrl, 2048, invalidate).use { createImage(it, size) }
 	
 	/** Fetches the given [coverUrl] with an [APIConnection] in the requested [size].
 	 * @param coverUrl the base url to fetch the cover
