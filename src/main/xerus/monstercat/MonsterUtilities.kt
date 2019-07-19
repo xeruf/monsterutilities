@@ -315,12 +315,13 @@ class MonsterUtilities(checkForUpdate: Boolean): VBox(), JFXMessageDisplay {
 	}
 	
 	/** Shows a new window with an ImageView of the requested [coverUrl]
-	 * [title] Title of the window, only useful when decorated
-	 * [size] Height and width in pixel of the window and image
-	 * [isDecorated] True if the window has borders and title bar with close controls
-	 * [isDraggable] True if the window can be dragged by the mouse
-	 * [closeOnFocusLost] Should we close the window if we're out of focus ?
-	 * [isResizable] Allow resizing the window. The image will follow.
+	 * @param coverUrl URL of the cover to download and show
+	 * @param title Title of the window, only useful when decorated
+	 * @param size Height and width in pixel of the window and image
+	 * @param isDecorated True if the window has borders and title bar with close controls
+	 * @param isDraggable True if the window can be dragged by the mouse
+	 * @param closeOnFocusLost Should we close the window if we're out of focus ?
+	 * @param isResizable Allow resizing the window. The image will follow.
 	 */
 	fun viewCover(coverUrl: String, size: Double? = null, title: String = "Cover Art", isDecorated: Boolean = false, isDraggable: Boolean = true, closeOnFocusLost: Boolean = true, isResizable: Boolean = false){
 		val windowSize: Double = size ?: minOf(Screen.getPrimary().visualBounds.width, Screen.getPrimary().visualBounds.height) / 2
