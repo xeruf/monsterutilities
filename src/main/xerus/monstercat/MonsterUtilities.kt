@@ -357,8 +357,8 @@ class MonsterUtilities(checkForUpdate: Boolean): VBox(), JFXMessageDisplay {
 			}
 			
 			if (closeOnFocusLost) {
-				focusedProperty().addListener { _, lostFocus, _ ->
-					if (lostFocus) close()
+				focusedProperty().addListener { _, _, newFocus ->
+					if (!newFocus) close()
 				}
 			}
 			show()
