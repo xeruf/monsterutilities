@@ -23,9 +23,12 @@ object Settings : SettingsNode("xerus/monsterutilities") {
 	val PLAYERSEEKBARHEIGHT = create("playerSeekbarHeight", 8.0)
 	val ENABLEEQUALIZER = create("equalizerEnabled", false)
 	
-	val PLAYERARTPRIORITY = create("coverartPriorityList", TabSettings.PriorityList.SGL_ALB_COL.priorities) {
-		it.removeSurrounding("[","]").split(", ")
+	val PLAYERARTPRIORITY = create("coverartPriorityList", TabSettings.PriorityList.SGL_ALB_COL) {
+		TabSettings.PriorityList.valueOf(it)
 	}
+	/* {
+		it.removeSurrounding("[","]").split(", ")
+	}*/
 	
 	val ENABLECACHE = create("cacheEnabled", true)
 	

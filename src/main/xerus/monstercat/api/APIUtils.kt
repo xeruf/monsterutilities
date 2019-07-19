@@ -46,7 +46,7 @@ object APIUtils {
 				}
 		}
 		bestTrack = tracks.filter { it.id == bestTrack?.id }
-				.minBy { xerus.monstercat.Settings.PLAYERARTPRIORITY.get().indexOf(it.release.type)}
+				.minBy { xerus.monstercat.Settings.PLAYERARTPRIORITY.get().priorities.indexOf(it.release.type)}
 		
 		return bestTrack
 	}

@@ -24,6 +24,7 @@ import org.controlsfx.validation.ValidationResult
 import org.controlsfx.validation.ValidationSupport
 import org.controlsfx.validation.Validator
 import xerus.ktutil.byteCountString
+import xerus.ktutil.helpers.Named
 import xerus.ktutil.javafx.*
 import xerus.ktutil.javafx.properties.*
 import xerus.ktutil.javafx.ui.App
@@ -39,6 +40,7 @@ import xerus.monstercat.api.response.Release.Type.SINGLE
 import xerus.monstercat.cacheDir
 import xerus.monstercat.dataDir
 import xerus.monstercat.downloader.DownloaderSettings
+import xerus.monstercat.downloader.createComboBox
 import xerus.monstercat.logDir
 import xerus.monstercat.monsterUtilities
 import java.awt.Desktop
@@ -83,14 +85,16 @@ class TabSettings: VTab() {
 			Settings.PLAYERSEEKBARHEIGHT.bind(valueProperty() as ObservableValue<out Double>)
 		})
 		
-		val coverPriority = ComboBox(FXCollections.observableArrayList<PriorityList>(*PriorityList.values())).apply {
+		/*val coverPriority = ComboBox(FXCollections.observableArrayList<PriorityList>(*PriorityList.values())).apply {
 			converter = object: StringConverter<PriorityList>() {
 				override fun toString(priorities: PriorityList) = PriorityList.getString(priorities)
 				override fun fromString(string: String) = PriorityList.findFromString(string)
 			}
 			valueProperty().bindBidirectional(Settings.PLAYERARTPRIORITY, {it.priorities}, {PriorityList.findFromList(it)})
 			select(PriorityList.findFromList(Settings.PLAYERARTPRIORITY.get()))
-		}
+		}*/
+
+		val coverPriority = createComboBox(Settings.PLAYERARTPRIORITY)
 		addLabeled("Player Coverart priorities:", coverPriority)
 		
 		addRow(CheckBox("Enable Cache").bind(Settings.ENABLECACHE))
@@ -237,17 +241,20 @@ class TabSettings: VTab() {
 		data class Feedback(val subject: String, val message: String)
 	}
 	
-	enum class PriorityList(val priorities: List<String>){
+	enum class PriorityList(val priorities: List<String>) : Named {
 		SGL_ALB_COL(listOf(SINGLE, ALBUM, MCOLLECTION, BESTOF, MIXES, PODCAST)),
 		ALB_SGL_COL(listOf(ALBUM, SINGLE, MCOLLECTION, BESTOF, MIXES, PODCAST)),
 		COL_SGL_ALB(listOf(MCOLLECTION, SINGLE, ALBUM, BESTOF, MIXES, PODCAST)),
 		COL_ALB_SGL(listOf(MCOLLECTION, ALBUM, SINGLE, BESTOF, MIXES, PODCAST));
-		
+
+		override val displayName: String
+			get() = priorities.subList(0, 3).toString().removeSurrounding("[", "]").replace(", ", " > ")
+
 		companion object {
 			fun findFromString(string: String) =
 					PriorityList.values().find { string == getString(it) } ?: SGL_ALB_COL
 			
-			fun findFromList(list: List<String>) = 
+			fun findFromList(list: List<String>) =
 					PriorityList.values().find { list[0] == it.priorities[0] && list[1] == it.priorities[1] } ?: SGL_ALB_COL
 			
 			fun getString(list: PriorityList): String {
