@@ -109,7 +109,7 @@ class APIConnection(vararg path: String) : HTTPQuery<APIConnection>() {
 	
 	companion object {
 		private fun getRealMaxConnections(networkMax: Int) = min(networkMax, Runtime.getRuntime().availableProcessors().coerceAtLeast(2) * 50)
-		var maxConnections = getRealMaxConnections(Settings.CONNECTIONSPEED.get())
+		var maxConnections = getRealMaxConnections(Settings.CONNECTIONSPEED.get().maxConnections)
 		private var httpClient = createHttpClient(CONNECTSID())
 		
 		val connectValidity = SimpleObservable(ConnectValidity.NOCONNECTION, true)
@@ -157,8 +157,8 @@ class APIConnection(vararg path: String) : HTTPQuery<APIConnection>() {
 				maxTotal = maxConnections
 				logger.debug("Initial maxConnections set is ${maxConnections}")
 				Settings.CONNECTIONSPEED.listen { newValue ->
+					maxConnections = getRealMaxConnections(newValue.maxConnections)
 					logger.debug("Changed maxConnections to ${maxConnections}")
-					maxConnections = getRealMaxConnections(newValue)
 					defaultMaxPerRoute = (maxConnections * 0.9).toInt()
 					maxTotal = maxConnections
 				}

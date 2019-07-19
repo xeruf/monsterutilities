@@ -5,6 +5,7 @@ import javafx.beans.value.ObservableValue
 import javafx.scene.control.Alert
 import javafx.scene.control.ButtonBar
 import mu.KotlinLogging
+import xerus.ktutil.helpers.Named
 import xerus.ktutil.javafx.applyTheme
 import xerus.ktutil.javafx.Themes
 import xerus.ktutil.javafx.properties.listen
@@ -42,11 +43,14 @@ object Settings : SettingsNode("xerus/monsterutilities") {
 	
 	val FILENAMEPATTERN = create("updatePattern", "MonsterUtilities-%version%.jar")
 	
-	enum class ConnectionSpeed(val maxConnections: Int, val display: String) {
+	enum class ConnectionSpeed(val maxConnections: Int, val display: String) : Named {
 		DIALUP(5, "Dial-up (100 kb/s)"),
 		ADSL(30, "ADSL / 3G (10 Mb/s)"),
 		CABLE(150, "Cable / 4G (100 Mb/s)"),
 		FIBER(300, "Fiber (300+ Mb/s)");
+
+		override val displayName: String
+			get() = display
 
 		override fun toString(): String = display
 		
@@ -70,7 +74,7 @@ object Settings : SettingsNode("xerus/monsterutilities") {
 			}
 		}
 	}
-	val CONNECTIONSPEED = create("connectionSpeed", ConnectionSpeed.ADSL.maxConnections)
+	val CONNECTIONSPEED = create("connectionSpeed", ConnectionSpeed.ADSL)
 	
 	init {
 		ENABLECACHE.listen { selected ->

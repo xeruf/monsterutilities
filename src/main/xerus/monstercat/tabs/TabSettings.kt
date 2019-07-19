@@ -33,6 +33,7 @@ import xerus.monstercat.api.Cache
 import xerus.monstercat.cacheDir
 import xerus.monstercat.dataDir
 import xerus.monstercat.downloader.DownloaderSettings
+import xerus.monstercat.downloader.createComboBox
 import xerus.monstercat.logDir
 import xerus.monstercat.monsterUtilities
 import java.awt.Desktop
@@ -76,7 +77,9 @@ class TabSettings: VTab() {
 			@Suppress("UNCHECKED_CAST")
 			Settings.PLAYERSEEKBARHEIGHT.bind(valueProperty() as ObservableValue<out Double>)
 		})
-		
+
+		val connectionSpeed = createComboBox(Settings.CONNECTIONSPEED)
+		/*
 		val connectionSpeed = ComboBox<String>(FXCollections.observableArrayList())
 		onFx {
 			Settings.ConnectionSpeed.values().reversedArray().forEach {
@@ -88,7 +91,7 @@ class TabSettings: VTab() {
 				Settings.ConnectionSpeed.findFromValue(it).toString()
 			})
 			connectionSpeed.select(Settings.ConnectionSpeed.findFromValue(Settings.CONNECTIONSPEED.get()).toString())
-		}
+		}*/
 		addLabeled("Internet Bandwidth", connectionSpeed)
 		
 		addRow(CheckBox("Enable Cache").bind(Settings.ENABLECACHE))
