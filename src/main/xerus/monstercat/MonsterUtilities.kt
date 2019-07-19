@@ -334,12 +334,6 @@ class MonsterUtilities(checkForUpdate: Boolean): VBox(), JFXMessageDisplay {
 		val stage = App.stage.createStage(title, pane).apply {
 			height = windowSize
 			width = windowSize
-			if (isResizable) {
-				widthProperty().addListener { _, _, newValue ->
-					largeImage.fitHeight = newValue as Double
-					largeImage.fitWidth = newValue
-				}
-			}
 			this.isResizable = isResizable
 			
 			widthProperty().addListener { _, _, newValue ->
