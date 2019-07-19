@@ -55,23 +55,10 @@ object Settings : SettingsNode("xerus/monsterutilities") {
 		override fun toString(): String = display
 		
 		companion object {
-			fun findFromValue(maxConnections: Int): ConnectionSpeed {
-				ConnectionSpeed.values().forEach {
-					if (it.maxConnections == maxConnections)
-						return it
-				}
-				logger.warn("ConnectionSpeed Enum couldn't be found from value $maxConnections")
-				return ADSL // Default value
-			}
+			fun findFromValue(maxConnections: Int) =
+					ConnectionSpeed.values().find { it.maxConnections == maxConnections } ?: ADSL
 			
-			fun findFromString(string: String): ConnectionSpeed {
-				ConnectionSpeed.values().forEach {
-					if (it.toString() == string)
-						return it
-				}
-				logger.warn("ConnectionSpeed Enum couldn't be found from value $string")
-				return ADSL // Default value
-			}
+			fun findFromString(string: String) = ConnectionSpeed.values().find { it.toString() == string } ?: ADSL
 		}
 	}
 	val CONNECTIONSPEED = create("connectionSpeed", ConnectionSpeed.ADSL)
