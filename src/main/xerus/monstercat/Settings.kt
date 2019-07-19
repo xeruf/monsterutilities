@@ -26,9 +26,6 @@ object Settings : SettingsNode("xerus/monsterutilities") {
 	val PLAYERARTPRIORITY = create("coverartPriorityList", TabSettings.PriorityList.SGL_ALB_COL) {
 		TabSettings.PriorityList.valueOf(it)
 	}
-	/* {
-		it.removeSurrounding("[","]").split(", ")
-	}*/
 	
 	val ENABLECACHE = create("cacheEnabled", true)
 	
