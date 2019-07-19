@@ -39,7 +39,7 @@ object Covers {
 	}
 	
 	/** Returns a larger Image of the cover in the requested size using caching.
-	 * @param size the size of the Image - the downloaded image will be at maximum 2048x2048 */
+	 * @param size the size of the Image - the image file will always be 2048x2048 */
 	fun getCoverImage(coverUrl: String, size: Int = 2048, invalidate: Boolean = false): Image =
 			getCover(coverUrl, invalidate).use { createImage(it, size) }
 	
