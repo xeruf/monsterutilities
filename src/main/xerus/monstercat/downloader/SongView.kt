@@ -14,6 +14,7 @@ import mu.KotlinLogging
 import xerus.ktutil.javafx.MenuItem
 import xerus.ktutil.javafx.controlsfx.FilterableCheckTreeView
 import xerus.ktutil.javafx.expandAll
+import xerus.ktutil.javafx.onError
 import xerus.ktutil.javafx.onFx
 import xerus.ktutil.javafx.properties.SimpleObservable
 import xerus.ktutil.javafx.properties.addOneTimeListener
@@ -162,11 +163,10 @@ class SongView(private val sorter: ObservableValue<ReleaseSorting>):
 				treeItem.internalChildren.add(CheckBoxTreeItem(track))
 			}
 			GlobalScope.launch(globalDispatcher) {
-				var image = Covers.getThumbnailImage(release.coverUrl, 16)
-				if(image.exception != null) {
-					image = Covers.getThumbnailImage(release.coverUrl, 16, true)
-					if(image.exception != null)
-						logger.debug("Failed to load coverUrl ${release.coverUrl} for $release", image.exception)
+				var image = Covers.getCoverImage(release.coverUrl, 16)
+				image.onError {
+					image = Covers.getCoverImage(release.coverUrl, 16, true)
+					image.onError { logger.debug("Failed to load coverUrl ${release.coverUrl} for $release", it) }
 				}
 				onFx {
 					treeItem.graphic = ImageView(image)
