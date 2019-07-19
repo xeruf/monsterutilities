@@ -173,7 +173,7 @@ object Player: FadingHBox(true, targetHeight = 25) {
 			if(coverUrl != null) {
 				val imageView = ImageView(Covers.getThumbnailImage(coverUrl!!, 24))
 				imageView.setOnMouseClicked {
-					if (it.button == MouseButton.PRIMARY && (it.clickCount == 1 || it.clickCount == 2)) {
+					if (it.button == MouseButton.PRIMARY) {
 						monsterUtilities.viewCover(coverUrl!!)
 					}
 				}
