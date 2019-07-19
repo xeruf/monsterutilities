@@ -10,12 +10,14 @@ import java.io.InputStream
 import java.net.URI
 
 object Covers {
+
+	private val coverCacheDir = cacheDir.resolve("cover-images").apply { mkdirs() }
 	
-	private val thumbnailCacheDir = cacheDir.resolve("cover-images").apply { mkdirs() }
-	private val coverCacheDir = cacheDir.resolve("large-cover-images").apply { mkdirs() }
-	
-	private fun coverCacheFile(file: File, coverUrl: String) =
-			file.apply { mkdirs() }.resolve(coverUrl.substringAfterLast('/').replaceIllegalFileChars())
+	private fun coverCacheFile(file: File, coverUrl: String, size: Int) = file.run {
+			mkdir()
+			val newFile = resolve(coverUrl.substringAfterLast('/').replaceIllegalFileChars())
+			resolve("${newFile.nameWithoutExtension}-${size}x$size.${newFile.extension}")
+		}
 	
 	private fun createImage(content: InputStream, size: Number) =
 			Image(content, size.toDouble(), size.toDouble(), false, false)
@@ -31,7 +33,7 @@ object Covers {
 	 * @param invalidate set to true to ignore already existing cache files
 	 */
 	fun getCover(coverUrl: String, size: Int = 64, invalidate: Boolean = false) : InputStream {
-		val file = coverCacheFile(if (size > 128) coverCacheDir else thumbnailCacheDir, coverUrl)
+		val file = coverCacheFile(coverCacheDir , coverUrl, size)
 		if(!file.exists() || invalidate) {
 			fetchCover(coverUrl, size).content.use { input ->
 				file.outputStream().use { out ->
