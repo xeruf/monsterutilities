@@ -244,21 +244,11 @@ class TabSettings: VTab() {
 		COL_ALB_SGL(listOf(MCOLLECTION, ALBUM, SINGLE, BESTOF, MIXES, PODCAST));
 		
 		companion object {
-			fun findFromString(string: String): PriorityList{
-				PriorityList.values().forEach {
-					if (string == getString(it))
-						return it
-				}
-				return SGL_ALB_COL
-			}
+			fun findFromString(string: String) =
+					PriorityList.values().find { string == getString(it) } ?: SGL_ALB_COL
 			
-			fun findFromList(list: List<String>): PriorityList{
-				PriorityList.values().forEach {
-					if (list[0] == it.priorities[0] && list[1] == it.priorities[1])
-						return it
-				}
-				return SGL_ALB_COL
-			}
+			fun findFromList(list: List<String>) = 
+					PriorityList.values().find { list[0] == it.priorities[0] && list[1] == it.priorities[1] } ?: SGL_ALB_COL
 			
 			fun getString(list: PriorityList): String {
 				return list.priorities.subList(0, 3).toString().removeSurrounding("[", "]").replace(", ", " > ")
