@@ -79,19 +79,6 @@ class TabSettings: VTab() {
 		})
 
 		val connectionSpeed = createComboBox(Settings.CONNECTIONSPEED)
-		/*
-		val connectionSpeed = ComboBox<String>(FXCollections.observableArrayList())
-		onFx {
-			Settings.ConnectionSpeed.values().reversedArray().forEach {
-				connectionSpeed.items.add(it.toString())
-			}
-			connectionSpeed.valueProperty().bindBidirectional(Settings.CONNECTIONSPEED, {
-				Settings.ConnectionSpeed.findFromString(it).maxConnections
-			}, {
-				Settings.ConnectionSpeed.findFromValue(it).toString()
-			})
-			connectionSpeed.select(Settings.ConnectionSpeed.findFromValue(Settings.CONNECTIONSPEED.get()).toString())
-		}*/
 		addLabeled("Internet Bandwidth", connectionSpeed)
 		
 		addRow(CheckBox("Enable Cache").bind(Settings.ENABLECACHE))
