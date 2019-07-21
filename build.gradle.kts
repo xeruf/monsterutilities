@@ -28,11 +28,12 @@ plugins {
 }
 
 install4j {
-	var install4jDir : String? = null
-	if (hasProperty("install4jDir"))
-		install4jDir = property("install4jDir") as String?
-	if (!install4jDir.isNullOrEmpty())
-		installDir = file(install4jDir)
+	if (hasProperty("install4jDir")) {
+		with (property("install4jDir") as String?) {
+			if (!isNullOrEmpty())
+				installDir = file(this!!)
+		}
+	}
 }
 
 // source directories
