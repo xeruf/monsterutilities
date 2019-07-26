@@ -29,9 +29,8 @@ plugins {
 
 install4j {
 	if (hasProperty("install4jDir")) {
-		with (property("install4jDir") as String?) {
-			if (!isNullOrEmpty())
-				installDir = file(this!!)
+		(property("install4jDir") as String?)?.let {
+			installDir = file(it)
 		}
 	}
 }
@@ -148,28 +147,21 @@ tasks {
 		
 		var path : File? = null
 		doFirst {
-			println("[INSTALL4J] Installers will be saved in ./install4j directory")
-			path = file(jarFile).copyTo(file("install4j/$jarFile"), true)
-			println(
-					if (path?.exists() == true)
-						"Created temporary install4j file 'install4j/${path?.name}'"
-					else
-						"Couldn't create temporary install4j file 'install4j/${path?.name}'"
-			)
+			path = file(jarFile).copyTo(file("build/install4j/$jarFile"), true)
+			if (path?.exists() == false) {
+				println("Couldn't create temporary install4j file '${path?.path}'")
+			}
 		}
 		
 		doLast {
-			println(
-					if (path?.delete() == true)
-						"Deleted temporary install4j file 'install4j/${path?.name}'"
-					else
-						"Cannot delete temporary install4j file 'install4j/${path?.name}'"
-			)
+			if (path?.delete() == false) {
+				println("Cannot delete temporary install4j file '${path?.path}'")
+			}
 		}
 		
-		projectFile = file("install4j/MonsterUtilities.install4j")
+		projectFile = file("MonsterUtilities.install4j")
 		this.release = version.toString()
-		destination = "install4j/"
+		destination = "build/install4j/"
 	}
 	
 	withType<KotlinCompile> {

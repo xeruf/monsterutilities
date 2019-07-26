@@ -15,5 +15,3 @@ src/resources/sheets-api-key
 src/resources/client_secret.json
 
 .floo*
-install4j/*
-!install4j/*.install4j

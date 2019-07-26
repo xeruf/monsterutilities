@@ -23,8 +23,8 @@
         </classPath>
       </java>
       <iconImageFiles>
-        <file path="../assets/favicon_macos.png" />
-        <file path="../assets/favicon.png" />
+        <file path="assets/favicon_macos.png" />
+        <file path="assets/favicon.png" />
       </iconImageFiles>
     </launcher>
   </launchers>
@@ -35,7 +35,7 @@
           <property name="customIconImageFiles">
             <add>
               <object class="com.install4j.api.beans.ExternalFile">
-                <string>../assets/favicon.png</string>
+                <string>assets/favicon.png</string>
               </object>
             </add>
           </property>
@@ -183,6 +183,7 @@ return console.askOkCancel(message, true);
       <application id="uninstaller" beanClass="com.install4j.runtime.beans.applications.UninstallerApplication">
         <serializedBean>
           <property name="customMacosExecutableName" type="string">${i18n:UninstallerMenuEntry(${compiler:sys.fullName})}</property>
+          <property name="executableName" type="string">Uninstall</property>
           <property name="useCustomMacosExecutableName" type="boolean" value="true" />
         </serializedBean>
         <startup>
