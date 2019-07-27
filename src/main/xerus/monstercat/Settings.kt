@@ -42,25 +42,7 @@ object Settings : SettingsNode("xerus/monsterutilities") {
 	val UNSTABLE = create("updateUnstable", false)
 	
 	val FILENAMEPATTERN = create("updatePattern", "MonsterUtilities-%version%.jar")
-	
-	enum class ConnectionSpeed(val maxConnections: Int, val display: String) : Named {
-		DIALUP(5, "Dial-up (100 kb/s)"),
-		ADSL(30, "ADSL / 3G (10 Mb/s)"),
-		CABLE(150, "Cable / 4G (100 Mb/s)"),
-		FIBER(300, "Fiber (300+ Mb/s)");
 
-		override val displayName: String
-			get() = display
-
-		override fun toString(): String = display
-		
-		companion object {
-			fun findFromValue(maxConnections: Int) =
-					ConnectionSpeed.values().find { it.maxConnections == maxConnections } ?: ADSL
-			
-			fun findFromString(string: String) = ConnectionSpeed.values().find { it.toString() == string } ?: ADSL
-		}
-	}
 	val CONNECTIONSPEED = create("connectionSpeed", ConnectionSpeed.ADSL)
 	
 	init {
@@ -91,5 +73,21 @@ object Settings : SettingsNode("xerus/monsterutilities") {
 		
 		THEME.listen { monsterUtilities.scene.applyTheme(it) }
 	}
-	
+
+	// ENUMs
+	enum class ConnectionSpeed(val maxConnections: Int, override val displayName: String) : Named {
+		DIALUP(5, "Dial-up (100 kb/s)"),
+		ADSL(30, "ADSL / 3G (10 Mb/s)"),
+		CABLE(150, "Cable / 4G (100 Mb/s)"),
+		FIBER(300, "Fiber (300+ Mb/s)");
+
+		override fun toString(): String = displayName
+
+		companion object {
+			fun findFromValue(maxConnections: Int) =
+					ConnectionSpeed.values().find { it.maxConnections == maxConnections } ?: ADSL
+
+			fun findFromString(string: String) = ConnectionSpeed.values().find { it.toString() == string } ?: ADSL
+		}
+	}
 }
