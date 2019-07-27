@@ -46,6 +46,7 @@ application {
 repositories {
 	jcenter()
 	maven("https://jitpack.io")
+	maven("http://maven.bestsolution.at/efxclipse-releases/")
 }
 
 dependencies {
@@ -57,6 +58,7 @@ dependencies {
 	implementation("ch.qos.logback", "logback-classic", "1.2.+")
 	implementation("io.github.microutils", "kotlin-logging", "1.6.+")
 	
+	implementation("com.dlsc.preferencesfx", "preferencesfx-core", "2.1.0")
 	implementation("be.bluexin", "drpc4k", "0.9")
 	implementation("org.apache.httpcomponents", "httpmime", "4.5.+")
 	implementation("com.google.apis", "google-api-services-sheets", "v4-rev20190508-1.30.1")
