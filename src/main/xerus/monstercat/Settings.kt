@@ -18,32 +18,35 @@ import java.io.File
 object Settings : SettingsNode("xerus/monsterutilities") {
 	private val logger = KotlinLogging.logger { }
 	
+	// Player settings
 	val PLAYERVOLUME = create("playerVolume", 0.4)
 	val PLAYERSCROLLSENSITIVITY = create("playerSeekbarScrollSensitivity", 6.0)
 	val PLAYERSEEKBARHEIGHT = create("playerSeekbarHeight", 8.0)
 	val ENABLEEQUALIZER = create("equalizerEnabled", false)
 	
-	val ENABLECACHE = create("cacheEnabled", true)
-	
+	// Theme and base app settings
+	val THEME = create("theme", Themes.BLACK)
 	val STARTUPTAB = create("tabStartup", "Previous")
 	val LASTTAB = create("tabLast")
 	
+	// Catalog tab settings
 	val LASTCATALOGCOLUMNS = create("catalogLastColumns", availableColumns)
 	val VISIBLECATALOGCOLUMNS = create("catalogVisibleColumns", defaultColumns)
 	val GENRECOLORINTENSITY = create("genrecolors", 80)
 	
-	val THEME = create("theme", Themes.BLACK)
-	
+	// Update mechanism
 	val LASTVERSION = create("versionLast")
 	val IGNOREVERSION = create("versionIgnore")
 	val DELETE = create("versionDelete", File(""))
-	
 	val AUTOUPDATE = create("updateAutomatic", true)
 	val UNSTABLE = create("updateUnstable", false)
 	
+	// Downloader settings
 	val FILENAMEPATTERN = create("updatePattern", "MonsterUtilities-%version%.jar")
-
+	
+	// Connection and API settings
 	val CONNECTIONSPEED = create("connectionSpeed", ConnectionSpeed.ADSL)
+	val ENABLECACHE = create("cacheEnabled", true)
 	
 	init {
 		ENABLECACHE.listen { selected ->
