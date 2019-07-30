@@ -88,12 +88,9 @@ class TabSettings: VTab() {
 			@Suppress("UNCHECKED_CAST")
 			Settings.PLAYERSEEKBARHEIGHT.bind(valueProperty() as ObservableValue<out Double>)
 		})
-
-		val connectionSpeed = createComboBox(Settings.CONNECTIONSPEED)
-		addLabeled("Internet Bandwidth", connectionSpeed)
-
-		val coverPriority = createComboBox(Settings.PLAYERARTPRIORITY)
-		addLabeled("Player Coverart priorities:", coverPriority)
+		addLabeled("Player Coverart priorities:", createComboBox(Settings.PLAYERARTPRIORITY))
+		
+		addLabeled("Internet Bandwidth", createComboBox(Settings.CONNECTIONSPEED))
 		
 		addRow(CheckBox("Enable Cache").bind(Settings.ENABLECACHE))
 		if(Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN))
