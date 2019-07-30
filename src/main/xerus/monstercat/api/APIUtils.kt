@@ -22,7 +22,7 @@ fun String.splitTitle(): List<String> {
 	return matches.groupValues.subList(1, matches.groupValues.size).mapNotNull { it.trim().nullIfEmpty() }
 }
 
-val meaninglessTitleContents = arrayOf("feat.", "Remix")
+val meaninglessTitleContents = arrayOf("", "feat.", "Remix")
 
 fun String.splitTitleTrimmed() =
 	split(' ', ',', '[', ']', '(', ')', '&').filterNot { it in meaninglessTitleContents }
@@ -40,9 +40,8 @@ object APIUtils {
 			val splitTitleTrimmed = track.init().splitTitle
 			titleSplit.sumBy { splitTitleTrimmed.contains(it).toInt() }
 				.also {
-					if(it > loggingThreshold) {
-						logger.trace { "Rated $track with $it for \"$artists - $title\"" }
-					}
+					if(it > loggingThreshold)
+						logger.trace { "Rated $track with $it for \"$artists - $title\" - $splitTitleTrimmed $titleSplit" }
 				}
 		}
 		bestTrack = tracks.filter { it.id == bestTrack?.id }

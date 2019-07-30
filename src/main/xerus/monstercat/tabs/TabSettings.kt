@@ -89,6 +89,9 @@ class TabSettings: VTab() {
 			Settings.PLAYERSEEKBARHEIGHT.bind(valueProperty() as ObservableValue<out Double>)
 		})
 
+		val connectionSpeed = createComboBox(Settings.CONNECTIONSPEED)
+		addLabeled("Internet Bandwidth", connectionSpeed)
+
 		val coverPriority = createComboBox(Settings.PLAYERARTPRIORITY)
 		addLabeled("Player Coverart priorities:", coverPriority)
 		
