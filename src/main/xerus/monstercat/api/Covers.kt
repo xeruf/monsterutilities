@@ -13,11 +13,11 @@ object Covers {
 
 	private val coverCacheDir = cacheDir.resolve("cover-images").apply { mkdirs() }
 	
-	private fun coverCacheFile(file: File, coverUrl: String, size: Int) = file.run {
-			mkdir()
-			val newFile = resolve(coverUrl.substringAfterLast('/').replaceIllegalFileChars())
-			resolve("${newFile.nameWithoutExtension}-${size}x$size.${newFile.extension}")
-		}
+	private fun coverCacheFile(file: File, coverUrl: String, size: Int) {
+		file.mkdirs()
+		val newFile = file.resolve(coverUrl.substringAfterLast('/').replaceIllegalFileChars())
+		file.resolve("${newFile.nameWithoutExtension}-${size}x$size.${newFile.extension}")
+	}
 	
 	private fun createImage(content: InputStream, size: Number) =
 			Image(content, size.toDouble(), size.toDouble(), false, false)
