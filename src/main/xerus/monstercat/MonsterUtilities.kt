@@ -356,7 +356,7 @@ class MonsterUtilities(checkForUpdate: Boolean): JFXMessageDisplay {
 		pane.add(Label("Cover loading..."))
 		pane.add(largeImage)
 		
-		val stage = App.stage.createStage(title, pane).apply {
+		App.stage.createStage(title, pane).apply {
 			height = windowSize
 			width = windowSize
 			this.isResizable = isResizable
