@@ -43,8 +43,8 @@ object Covers {
 	}
 	
 	/** Returns a larger Image of the cover in the requested size using caching.
-	 * @param size the size of the Image - the image file will always be 2048x2048 */
-	fun getCoverImage(coverUrl: String, size: Int = 2048, invalidate: Boolean = false): Image = getCover(coverUrl, 2048, invalidate).use { createImage(it, size) }
+	 * @param size the size of the Image - the image file will always be 1024x1024 */
+	fun getCoverImage(coverUrl: String, size: Int = 1024, invalidate: Boolean = false): Image = getCover(coverUrl, 1024, invalidate).use { createImage(it, size) }
 	
 	/** Fetches the given [coverUrl] with an [APIConnection] in the requested [size].
 	 * @param coverUrl the base url to fetch the cover
