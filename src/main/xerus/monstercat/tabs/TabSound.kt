@@ -1,18 +1,17 @@
 package xerus.monstercat.tabs
 
 import javafx.geometry.Orientation
+import javafx.scene.control.Button
 import javafx.scene.control.CheckBox
 import javafx.scene.control.Label
 import javafx.scene.control.Slider
 import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
 import javafx.scene.media.EqualizerBand
-import xerus.ktutil.javafx.add
-import xerus.ktutil.javafx.bind
-import xerus.ktutil.javafx.onFx
+import xerus.ktutil.javafx.*
 import xerus.ktutil.javafx.properties.listen
-import xerus.ktutil.javafx.scrollable
 import xerus.monstercat.Settings
+import xerus.monstercat.Settings.EQUALIZERBANDS
 import xerus.monstercat.api.Player
 
 class TabSound : VTab() {
@@ -21,8 +20,22 @@ class TabSound : VTab() {
 	var eqModel: MutableList<Double> = mutableListOf()
 	
 	init {
-		add(CheckBox("Enable Equalizer").bind(Settings.ENABLEEQUALIZER))
-		Player.activePlayer.listen { onFx { updateEQBox() } }
+		val resetButton = createButton("Reset") {
+			EQUALIZERBANDS.clear()
+			(it.source as Button).let { button ->
+				button.isDisable = true
+				button.text = "Please restart the player"
+			}
+		}
+		addRow(
+			CheckBox("Enable Equalizer").bind(Settings.ENABLEEQUALIZER),
+			resetButton
+		)
+		Player.activePlayer.listen { onFx {
+			updateEQBox()
+			resetButton.isDisable = false
+			resetButton.text = "Reset"
+		} }
 		
 		hint = Label("Play a song to display the controls").run(::add)
 		add(eqBox)
@@ -36,12 +49,15 @@ class TabSound : VTab() {
 			hint = null
 			
 			// Sync view with equalizer model
+			eqModel = if(EQUALIZERBANDS.get().isNotEmpty()) EQUALIZERBANDS.all.map { it.toDouble() }.toMutableList() else mutableListOf()
 			eq.enabledProperty().bind(Settings.ENABLEEQUALIZER)
 			for ((i, band) in eq.bands.withIndex()) {
 				while (eqModel.size <= i)
 					eqModel.add(band.gain)
-				val index: Int = i
-				eqBox.children.add(createEQBandView(band, eqModel[index]) { eqModel[index] = it })
+				eqBox.children.add(createEQBandView(band, eqModel[i]) {
+					eqModel[i] = it
+					EQUALIZERBANDS.putMulti(*eqModel.map { it.toString() }.toTypedArray())
+				})
 			}
 		} ?: Settings.ENABLEEQUALIZER.unbind()
 	}
