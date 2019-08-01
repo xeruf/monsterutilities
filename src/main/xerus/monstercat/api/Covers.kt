@@ -27,7 +27,7 @@ object Covers {
 
 	/** @return an [InputStream] of the downloaded image file
 	 * @param coverUrl the URL for fetching the cover
-	 * @param size the final size of the cover
+	 * @param size in pixel for the requested image
 	 * @param invalidate set to true to ignore already existing cache files
 	 */
 	fun getCover(coverUrl: String, size: Int = 64, invalidate: Boolean = false) : InputStream {
