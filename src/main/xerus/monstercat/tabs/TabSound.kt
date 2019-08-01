@@ -1,6 +1,5 @@
 package xerus.monstercat.tabs
 
-import javafx.application.Platform
 import javafx.geometry.Orientation
 import javafx.scene.control.CheckBox
 import javafx.scene.control.Label
@@ -10,6 +9,7 @@ import javafx.scene.layout.VBox
 import javafx.scene.media.EqualizerBand
 import xerus.ktutil.javafx.add
 import xerus.ktutil.javafx.bind
+import xerus.ktutil.javafx.onFx
 import xerus.ktutil.javafx.properties.listen
 import xerus.ktutil.javafx.scrollable
 import xerus.monstercat.Settings
@@ -22,7 +22,7 @@ class TabSound : VTab() {
 	
 	init {
 		add(CheckBox("Enable Equalizer").bind(Settings.ENABLEEQUALIZER))
-		Player.activePlayer.listen { Platform.runLater(::updateEQBox) }
+		Player.activePlayer.listen { onFx { updateEQBox() } }
 		
 		hint = Label("Play a song to display the controls").run(::add)
 		add(eqBox)
