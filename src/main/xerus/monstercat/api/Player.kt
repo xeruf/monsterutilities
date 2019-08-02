@@ -207,7 +207,6 @@ object Player: FadingHBox(true, targetHeight = 25) {
 		updateCover(null)
 		disposePlayer()
 		GlobalScope.launch {
-			updateCover(null)
 			val track = APIUtils.find(title, artists)
 			if(track == null) {
 				onFx { showBack("Track not found") }
