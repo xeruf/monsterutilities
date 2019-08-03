@@ -22,20 +22,10 @@ class TabSound : VTab() {
 	init {
 		val resetButton = createButton("Reset") {
 			EQUALIZERBANDS.clear()
-			(it.source as Button).let { button ->
-				button.isDisable = true
-				button.text = "Please restart the player"
-			}
-		}
-		addRow(
-			CheckBox("Enable Equalizer").bind(Settings.ENABLEEQUALIZER),
-			resetButton
-		)
-		Player.activePlayer.listen { onFx {
 			updateEQBox()
-			resetButton.isDisable = false
-			resetButton.text = "Reset"
-		} }
+		}
+		addRow(CheckBox("Enable Equalizer").bind(Settings.ENABLEEQUALIZER), resetButton)
+		Player.activePlayer.listen { onFx { updateEQBox() } }
 		
 		hint = Label("Play a song to display the controls").run(::add)
 		add(eqBox)
@@ -49,11 +39,9 @@ class TabSound : VTab() {
 			hint = null
 			
 			// Sync view with equalizer model
-			eqModel = if(EQUALIZERBANDS.get().isNotEmpty()) EQUALIZERBANDS.all.map { it.toDouble() }.toMutableList() else mutableListOf()
+			eqModel = if(EQUALIZERBANDS.get().isNotEmpty()) EQUALIZERBANDS.all.map { it.toDouble() }.toMutableList() else MutableList(eq.bands.size) { 0.0 }
 			eq.enabledProperty().bind(Settings.ENABLEEQUALIZER)
 			for ((i, band) in eq.bands.withIndex()) {
-				while (eqModel.size <= i)
-					eqModel.add(band.gain)
 				eqBox.children.add(createEQBandView(band, eqModel[i]) {
 					eqModel[i] = it
 					EQUALIZERBANDS.putMulti(*eqModel.map { it.toString() }.toTypedArray())
