@@ -1,5 +1,5 @@
 dist: trusty
-sudo: required
+sudo: false
 git:
   depth: 3
 addons:
