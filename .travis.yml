@@ -1,9 +1,11 @@
-dist: xenial
-sudo: false
-jdk:
-  - oraclejdk8
+dist: trusty
+sudo: required
 git:
   depth: 3
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer
 
 env:
   - TERM=dumb
