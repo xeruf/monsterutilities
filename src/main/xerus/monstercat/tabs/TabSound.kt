@@ -20,7 +20,7 @@ class TabSound : VTab() {
 	
 	init {
 		addRow(CheckBox("Enable Equalizer").bind(Settings.ENABLEEQUALIZER), createButton("Reset") { resetEQ() })
-		Player.activePlayer.listen { onFx { updateEQBox() } }
+		Player.activePlayer.listen { onFx(::updateEQBox) }
 		children.addAll(hint, eqBox)
 	}
 	
