@@ -23,8 +23,11 @@ object Settings : SettingsNode("xerus/monsterutilities") {
 	val PLAYERVOLUME = create("playerVolume", 0.4)
 	val PLAYERSCROLLSENSITIVITY = create("playerSeekbarScrollSensitivity", 6.0)
 	val PLAYERSEEKBARHEIGHT = create("playerSeekbarHeight", 8.0)
-	val ENABLEEQUALIZER = create("equalizerEnabled", false)
 	val PLAYERARTPRIORITY = create("coverartPriorityList", TabSettings.PriorityList.SGL_ALB_COL) { TabSettings.PriorityList.valueOf(it) }
+	
+	// Equalizer
+	val ENABLEEQUALIZER = create("equalizerEnabled", false)
+	val EQUALIZERBANDS = create("equalizerBands")
 	
 	// Theme and base app settings
 	val THEME = create("theme", Themes.BLACK)
@@ -89,12 +92,5 @@ object Settings : SettingsNode("xerus/monsterutilities") {
 		FIBER(300, "Fiber (300+ Mb/s)");
 
 		override fun toString(): String = displayName
-
-		companion object {
-			fun findFromValue(maxConnections: Int) =
-					ConnectionSpeed.values().find { it.maxConnections == maxConnections } ?: ADSL
-
-			fun findFromString(string: String) = ConnectionSpeed.values().find { it.toString() == string } ?: ADSL
-		}
 	}
 }

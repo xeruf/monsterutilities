@@ -107,14 +107,14 @@ class MonsterUtilities(checkForUpdate: Boolean): JFXMessageDisplay {
 		addTab(TabDownloader::class)
 		addTab(TabSound::class)
 		addTab(TabSettings::class)
-		if(VERSION != Settings.LASTVERSION.get()) {
+		if(currentVersion != Settings.LASTVERSION.get()) {
 			if(Settings.LASTVERSION().isEmpty()) {
 				logger.info("First launch! Showing tutorial!")
 				showIntro()
-				Settings.LASTVERSION.put(VERSION)
+				Settings.LASTVERSION.put(currentVersion)
 			} else {
 				GlobalScope.launch {
-					logger.info("New version! Now running $VERSION, previously " + Settings.LASTVERSION())
+					logger.info("New version! Now running $currentVersion, previously " + Settings.LASTVERSION())
 					val f = Settings.DELETE()
 					if(f.exists()) {
 						logger.info("Deleting older version $f...")
@@ -126,10 +126,11 @@ class MonsterUtilities(checkForUpdate: Boolean): JFXMessageDisplay {
 						if(res) {
 							Settings.DELETE.clear()
 							logger.info("Deleted $f!")
-						} else
+						} else {
 							logger.warn("Couldn't delete older version residing in $f")
+						}
 					}
-					Settings.LASTVERSION.put(VERSION)
+					Settings.LASTVERSION.put(currentVersion)
 				}
 				showChangelog()
 			}
@@ -144,14 +145,14 @@ class MonsterUtilities(checkForUpdate: Boolean): JFXMessageDisplay {
 	
 	inline fun <reified T: BaseTab> tabsByClass() = tabs.mapNotNull { it as? T }
 	
-	private fun String.devVersion() = if(startsWith("dev")) split('v', '-')[1].toInt() else null
+	private fun String.devVersion() = takeIf { it.startsWith("dev") }?.split('v', '-')?.getOrNull(1)?.toIntOrNull()
 	
 	fun checkForUpdate(userControlled: Boolean = false, unstable: Boolean = isUnstable) {
 		GlobalScope.launch {
 			try {
 				val latestVersion = URL("http://monsterutilities.bplaced.net/downloads/" + if(unstable) "unstable" else "latest").openConnection().getInputStream().reader().readLines().firstOrNull()
 				logger.info("Latest version: $latestVersion")
-				if(latestVersion == null || latestVersion.length > 50 || latestVersion == VERSION || (!userControlled && latestVersion == Settings.IGNOREVERSION()) || latestVersion.devVersion()?.let { VERSION.devVersion()!! < it } == true) {
+				if(latestVersion == null || latestVersion.length > 50 || latestVersion == currentVersion || (!userControlled && latestVersion == Settings.IGNOREVERSION()) || latestVersion.devVersion()?.let { currentVersion.devVersion()!! > it } == true) {
 					if(userControlled)
 						showMessage("No update found!", "Updater", Alert.AlertType.INFORMATION)
 					return@launch
@@ -163,10 +164,12 @@ class MonsterUtilities(checkForUpdate: Boolean): JFXMessageDisplay {
 						val dialog = showAlert(Alert.AlertType.CONFIRMATION, "Updater", null, "New version $latestVersion available! Update now?", ButtonType.YES, ButtonType("Not now", ButtonBar.ButtonData.NO), ButtonType("Ignore this update", ButtonBar.ButtonData.CANCEL_CLOSE))
 						dialog.stage.icons.setAll(Image("img/updater.png"))
 						dialog.resultProperty().listen { type ->
-							if(type.buttonData == ButtonBar.ButtonData.YES) {
-								update(latestVersion)
-							} else if(type.buttonData == ButtonBar.ButtonData.CANCEL_CLOSE)
-								Settings.IGNOREVERSION.set(latestVersion)
+							when(type.buttonData) {
+								ButtonBar.ButtonData.YES -> update(latestVersion)
+								ButtonBar.ButtonData.CANCEL_CLOSE -> Settings.IGNOREVERSION.set(latestVersion)
+								else -> {
+								}
+							}
 						}
 					}
 			} catch(e: UnknownHostException) {
@@ -200,8 +203,8 @@ class MonsterUtilities(checkForUpdate: Boolean): JFXMessageDisplay {
 			}
 			
 			override fun succeeded() {
-				if(isUnstable == unstable && jarLocation.toString().endsWith(".jar")) {
-					val jar = File(jarLocation.toURI())
+				if(isUnstable == unstable && codeSource.toString().endsWith(".jar")) {
+					val jar = File(codeSource.toURI())
 					logger.info("Scheduling '$jar' for delete")
 					Settings.DELETE.set(jar)
 				}
@@ -216,10 +219,14 @@ class MonsterUtilities(checkForUpdate: Boolean): JFXMessageDisplay {
 				
 				if(!exited) {
 					Platform.exit()
-					logger.warn("Exiting $VERSION!")
+					logger.warn("Exiting $currentVersion!")
 				} else {
 					showAlert(Alert.AlertType.WARNING, "Error while updating", content = "The downloaded jar was not started successfully!")
 				}
+			}
+			
+			override fun failed() {
+				showError(exception, "Error in the update process")
 			}
 		}
 		worker.launch()
