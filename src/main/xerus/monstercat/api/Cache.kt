@@ -38,7 +38,7 @@ object Cache: Refresher() {
 		return releases
 	}
 	
-	/** Gets all tracks by flatMapping all the tracks of all Releases. Two tracks with the same id will only yield one (hashSet) */
+	/** Gets a complete collection of unique Tracks. */
 	suspend fun getTracks(): Collection<Track> =
 		getReleases().flatMap { it.tracks }.toHashSet()
 	
