@@ -85,6 +85,8 @@ class ReleaseDownload(private val release: Release, private var tracks: Collecti
 		val contentLength = entity.contentLength
 		if(contentLength == 0L)
 			throw EmptyResponseException(connection.uri.toString())
+		if(!listOf("application/octet-stream", "audio/flac", "audio/wav", "audio/mpeg").contains(entity.contentType.value))
+			throw WrongResponseTypeException(connection.uri.toString(), entity.contentType.value)
 		val length = contentLength.toDouble()
 		downloadFile(entity.content, path, true) {
 			totalProgress + it / length
@@ -147,3 +149,5 @@ class ReleaseDownload(private val release: Release, private var tracks: Collecti
 }
 
 class EmptyResponseException(term: String) : Exception("No file found for $term!")
+
+class WrongResponseTypeException(term: String, mime: String) : Exception("Wrong MIME type returned for $term: type $mime unexpected!")
