@@ -277,7 +277,7 @@ class TabDownloader: VTab() {
 		addRow(createButton("Smart select") {
 			songView.onReady {
 				GlobalScope.launch {
-					val albums = arrayOf(Type.ALBUM, Type.EP).map { songView.roots[it] }.filterNotNull()
+					val albums = arrayOf(Type.ALBUM(), Type.EP()).map { songView.roots[it] }.filterNotNull()
 					albums.forEach { it.isSelected = true }
 					@Suppress("UNCHECKED_CAST")
 					val selectedAlbums = albums.flatMap { it.children } as List<FilterableTreeItem<Release>>
@@ -293,7 +293,7 @@ class TabDownloader: VTab() {
 						false
 					}
 					logger.trace { "Filtered out Collections in Smart Select: $filtered" }
-					songView.getItemsInCategory(Type.SINGLE).filter {
+					songView.getItemsInCategory(Type.SINGLE()).filter {
 						val tracks = it.value.tracks
 						if(tracks.size == 1) { // an actual single, check it directly
 							val track = tracks.first()
@@ -305,7 +305,7 @@ class TabDownloader: VTab() {
 						} else { // has multiple tracks, check with collections
 							return@filter true
 						}
-					}.plus(songView.getItemsInCategory(Type.MCOLLECTION)).forEach {
+					}.plus(songView.getItemsInCategory(Type.MCOLLECTION())).forEach {
 						it.children.forEach {
 							@Suppress("UNCHECKED_CAST")
 							val tr = it as CheckBoxTreeItem<Track>
