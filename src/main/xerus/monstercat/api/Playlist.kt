@@ -68,8 +68,11 @@ object Playlist {
 	
 	fun getNextTrackRandom(): Track {
 		return if (tracks.size <= 1) tracks[0]
-		else tracks[
-			Random.nextInt(0..tracks.lastIndex).let { if(it >= currentIndex.value!!) it + 1 else it } ]
+		else {
+			var index = Random.nextInt(0..tracks.lastIndex)
+			if(index >= currentIndex.value!!) index++
+			tracks[index]
+		}
 	}
 	
 	fun getNextTrack(): Track? {
