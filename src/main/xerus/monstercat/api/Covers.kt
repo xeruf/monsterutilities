@@ -29,7 +29,7 @@ object Covers {
 	fun getCoverImage(coverUrl: String, size: Int = 1024, invalidate: Boolean = false): Image =
 		getCover(coverUrl, 1024, invalidate).use { createImage(it, size) }
 	
-	private fun createImage(content: InputStream, size: Number) =
+	fun createImage(content: InputStream, size: Number) =
 		Image(content, size.toDouble(), size.toDouble(), false, false)
 	
 	/**
@@ -53,6 +53,16 @@ object Covers {
 			tempFile.renameTo(coverFile)
 		}
 		return coverFile.inputStream()
+	}
+	
+	fun getCachedCover(coverUrl: String, cachedSize: Int, imageSize: Int = cachedSize): Image? {
+		val coverFile = coverCacheFile(coverUrl, cachedSize)
+		return try {
+			val imageStream = coverFile.inputStream()
+			createImage(imageStream, imageSize)
+		} catch(e: Exception) {
+			null
+		}
 	}
 	
 	/** Fetches the given [coverUrl] with an [APIConnection] in the requested [size].
