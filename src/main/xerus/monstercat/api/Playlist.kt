@@ -67,8 +67,9 @@ object Playlist {
 	}
 	
 	fun getNextTrackRandom(): Track {
-		return if (tracks.size <= 1) tracks[0]
-		else {
+		return if(tracks.size <= 1) {
+			tracks[0]
+		} else {
 			var index = Random.nextInt(0..tracks.lastIndex)
 			if(index >= currentIndex.value!!) index++
 			tracks[index]
