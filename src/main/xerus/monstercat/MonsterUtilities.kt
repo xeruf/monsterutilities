@@ -50,7 +50,7 @@ class MonsterUtilities(checkForUpdate: Boolean): JFXMessageDisplay {
 	
 	val container = VBox()
 	
-	val root = StackPane(Region().apply { opacity = Settings.BACKRGOUNDCOVEROPACITY() }, container).also { pane ->
+	val root = StackPane(Region(), container).also { pane ->
 		Settings.BACKRGOUNDCOVEROPACITY.listen {
 			pane.children.first().opacity = it
 		}
@@ -61,13 +61,18 @@ class MonsterUtilities(checkForUpdate: Boolean): JFXMessageDisplay {
 				background = newBg
 			}
 			pane.children.add(0, newRegion)
-			val opacity = Settings.BACKRGOUNDCOVEROPACITY()
-			SimpleTransition(pane, Duration.seconds(1.0), {
-				newRegion.opacity = opacity * it
-				oldRegion.opacity = opacity * (1 - it)
-			}, true, {
-				children.remove(oldRegion)
-			})
+			onFx {
+				val opacity = Settings.BACKRGOUNDCOVEROPACITY()
+				SimpleTransition(pane, Duration.seconds(1.0), {
+					// TODO it doesn't animate both opacities
+					// TODO IDEA crash on reformat
+					newRegion.opacity = opacity * it
+					oldRegion.opacity = opacity * (1 - it)
+					println("${newRegion.opacity} - ${oldRegion.opacity}")
+				}, true, {
+					children.remove(oldRegion)
+				})
+			}
 		}
 	}
 	
