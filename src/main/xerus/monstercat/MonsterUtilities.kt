@@ -258,6 +258,12 @@ class MonsterUtilities(checkForUpdate: Boolean): JFXMessageDisplay {
 	
 	fun showChangelog() {
 		val c = Changelog().apply {
+			version("dev181", "Playlists, Coverart viewer(s), Installers, login dialog",
+				"New tab : Playlist ! Add tracks from Catalog or Downloader, more options on right-click",
+				"Coverart in the background, and clicking the art in the player will show a high resolution version.",
+				"Installers now available on Github",
+				"Direct Monstercat.com login in the downloader")
+			
 			version("dev139", "Improved fetching, caching & processing",
 				"The Release fetching now works with the new pagination of the Monstercat API",
 				"Added a little cover art in the Player",
