@@ -23,9 +23,10 @@ script:
 deploy:
   provider: releases
   token: "$GH_TOKEN"
+  file: ./*.jar
   file_glob: true
-  file:
-    - ./*.jar
-  skip_cleanup: true
+  prerelease: true
+  cleanup: false
   on:
     tags: true
+  edge: true
