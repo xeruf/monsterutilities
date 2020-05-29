@@ -3,12 +3,23 @@ package xerus.monstercat.api
 import javafx.beans.Observable
 import javafx.event.EventHandler
 import javafx.geometry.Pos
-import javafx.scene.control.*
+import javafx.scene.control.Button
+import javafx.scene.control.Label
+import javafx.scene.control.ProgressBar
+import javafx.scene.control.Slider
+import javafx.scene.control.ToggleButton
+import javafx.scene.control.Tooltip
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.input.MouseButton
 import javafx.scene.input.MouseEvent
-import javafx.scene.layout.*
+import javafx.scene.layout.Background
+import javafx.scene.layout.BackgroundImage
+import javafx.scene.layout.BackgroundPosition
+import javafx.scene.layout.BackgroundRepeat
+import javafx.scene.layout.BackgroundSize
+import javafx.scene.layout.Region
+import javafx.scene.layout.VBox
 import javafx.scene.media.Media
 import javafx.scene.media.MediaPlayer
 import javafx.util.Duration
@@ -216,12 +227,14 @@ object Player: FadingHBox(true, targetHeight = 25) {
 		.apply { selectedProperty().bindBidirectional(Playlist.repeat) }
 	private val skipbackButton = buttonWithId("skipback") { playPrev() }
 		.tooltip("Previous")
-		.apply { Playlist.currentIndex.listen { value -> isVisible = value != 0 } }
+		.apply {
+			disableProperty().dependOn(Playlist.currentIndex) { it == 0 }
+		}
 	private val skipButton = buttonWithId("skip") { playNext() }
 		.tooltip("Next")
 		.apply {
 			arrayOf<Observable>(Playlist.currentIndex, Playlist.repeat, Playlist.shuffle).addListener {
-				isVisible = Playlist.currentIndex.value != Playlist.tracks.lastIndex || Playlist.repeat.value || Playlist.shuffle.value
+				isDisable = Playlist.currentIndex.value == Playlist.tracks.lastIndex && !Playlist.repeat.value && !Playlist.shuffle.value
 			}
 		}
 	
