@@ -66,7 +66,7 @@ class SongView(private val sorter: ObservableValue<ReleaseSorting>):
 							disableDownload("This Release is currently not downloadable")
 						
 						// Licensable check (if in streamer mode)
-						Settings.SKIPUNLICENSABLE() && ((item as? Track)?.licensable == false || (item as? Release)?.tracks?.none { it.licensable } == true)
+						Settings.SKIPUNLICENSABLE() && ((item as? Track)?.licensable == false || (item as? Release)?.tracks?.none { !it.licensable } != false)
 						-> disableDownload("This Release is not licensable")
 						
 						else -> {
