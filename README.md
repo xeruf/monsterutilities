@@ -1,13 +1,13 @@
+# Maintainership handed over to [defvs], please use his fork instead!
+
 # ![icon](assets/favicon.png) MonsterUtilities ![Discord](https://img.shields.io/discord/417314230681993226.svg?logo=discord) [![Build Status](https://semaphoreci.com/api/v1/xerus2000/monsterutilities/branches/master/shields_badge.svg)](https://semaphoreci.com/xerus2000/monsterutilities)
 
 Browse, stream and download [Monstercat] Songs, powered by the [Monstercat API] and [MCatalog].
 
-> The application has been used by many people without major problems. But it will probably stay in "beta" because the [main developers](#credits) are not as active anymore.  
-We are however still available for questions in the [Discord] or via [GitHub issues][issues] and [welcome new contributors](CONTRIBUTING.md)!
+> The application has been used by many people without major problems. But it will probably stay in "beta" because the [main developers](#credits) are not as active anymore.
+> We are however still available for questions in the [Discord] or via [GitHub issues][issues] and [welcome new contributors](CONTRIBUTING.md)!
 
 - [Getting started](#getting-started)
-- [Troubleshooting](#troubleshooting)
-- [Caching & Offline usage](#caching--offline-usage)
 - [Screenshots](#screenshots)
 - [Credits](#credits)
 
@@ -77,11 +77,13 @@ The application has various color schemes and configuration options.
 
 ## Credits
 
-[@xerus2000](https://github.com/xerus2000) [founded the project](assets/Story.md) and established most of its features. He still technically owns it, but has [mostly moved on to other projects](https://github.com/search?q=author%3Axerus2000&type=Issues).  
-[@defvs](https://github.com/defvs) is currently the main maintainer, but rarely gets around to anything other than critical fixes.
+[@xerus2000](https://github.com/xerus2000) [created the project](assets/Story.md) and established most basic features. He has [moved on to other projects](https://github.com/search?q=author%3Axerus2000&type=Issues) and handed over ownership to [defvs].
+
+[@defvs](https://github.com/defvs) is currently the main maintainer.
 
 We thank [![install4j](https://www.ej-technologies.com/images/product_banners/install4j_small.png)](https://www.ej-technologies.com/products/install4j/overview.html) for providing a free license to build the installers.
 
+[defvs]: https://github.com/defvs/monsterutilities
 [issues]: https://github.com/xerus2000/monsterutilities/issues
 [Discord]: https://discord.gg/ZEusvHS
 [Monstercat]: https://monstercat.com
